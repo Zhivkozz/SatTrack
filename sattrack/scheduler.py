@@ -71,6 +71,29 @@ class Scheduler:
         self.schedule_built: datetime | None = None
         self.next_refresh_try: datetime = datetime.min.replace(tzinfo=timezone.utc)
         self.passes_done = 0
+        # Състояние за графичния интерфейс (подменя се цялото, затова е безопасно
+        # за четене от друга нишка): state = starting|waiting|paused|tracking|stopped
+        self.status: dict = {"state": "stopped"}
+        self._refresh_req = False
+        self._reload_req = False
+
+    # --- заявки от интерфейса (изпълняват се между преминаванията, FR-17) ---
+    def request_refresh(self) -> None:
+        self._refresh_req = True
+
+    def request_reload(self) -> None:
+        """Списъкът или настройките са променени — нов график."""
+        self._reload_req = True
+
+    def _handle_requests(self) -> None:
+        if self._refresh_req:
+            self._refresh_req = False
+            self.refresh_data(force=True)
+        if self._reload_req:
+            self._reload_req = False
+            self.load_selection(update=False)
+            self.build_schedule()
+            log.info("Графикът е обновен: %d преминавания напред", len(self.schedule))
 
     # --- данни и прогноза ---
     def refresh_data(self, force: bool = False) -> None:
@@ -153,7 +176,14 @@ class Scheduler:
             return False
 
     def run(self, max_passes: int | None = None) -> None:
-        self.startup()
+        self.status = {"state": "starting"}
+        try:
+            self.startup()
+            self._loop(max_passes)
+        finally:
+            self.status = {"state": "stopped"}
+
+    def _loop(self, max_passes: int | None) -> None:
         last_status = 0.0
         while not self.controls.quit:
             self.controls.poll()
@@ -162,6 +192,7 @@ class Scheduler:
                 self.print_forecast()
             now = self.clock.now()
 
+            self._handle_requests()
             self.refresh_data()
             if self.schedule_built is None or now - self.schedule_built > timedelta(hours=SCHEDULE_REBUILD_H):
                 self.build_schedule()
@@ -175,14 +206,21 @@ class Scheduler:
             if not self.schedule:
                 self.build_schedule()
                 if not self.schedule:
-                    self.clock.sleep(60)
+                    self.status = {"state": "paused" if self.controls.paused else "waiting", "next": None}
+                    for _ in range(60):  # реагира на команди от интерфейса
+                        if self.controls.quit or self._refresh_req or self._reload_req:
+                            break
+                        self.clock.sleep(1)
+                        self.controls.poll()
                     continue
 
             nxt = self.schedule[0]
             start_at = nxt.aos - timedelta(seconds=self.p["prestart_s"])
             if self.controls.paused:
+                self.status = {"state": "paused", "next": nxt}
                 self.clock.sleep(1)
                 continue
+            self.status = {"state": "waiting", "next": nxt, "start_at": start_at}
             if now >= start_at:
                 self.schedule.pop(0)
                 self.run_pass(nxt)
@@ -232,6 +270,7 @@ class Scheduler:
                  s.mode, p.max_elevation_deg, p.los.astimezone(self.passlog.tz).strftime("%H:%M:%S"))
 
         now = self.clock.now()
+        self.status = {"state": "tracking", "pass": p, "now": now, "live": None}
         _, _, rr = self.predictor.look(s.norad_id, now)
         f_now = rx_frequency(s.frequency_hz, rr)
         try:
@@ -266,6 +305,7 @@ class Scheduler:
 
         try:
             self.recorder.start(wav)
+            record["audio_input"] = getattr(self.recorder, "used_path", None)
         except (RecorderError, Exception) as e:
             log.error("Аудио записът не стартира: %s", e)
             record["events"].append(f"аудио грешка: {e}")
@@ -289,6 +329,10 @@ class Scheduler:
                 el, az, rr = self.predictor.look(s.norad_id, now)
                 f = rx_frequency(s.frequency_hz, rr)
                 f_min, f_max = min(f_min, f), max(f_max, f)
+                self.status = {"state": "tracking", "pass": p, "now": now, "live": {
+                    "el": el, "az": az, "freq": f, "offset": f - s.frequency_hz,
+                    "sent": gate.last_sent, "smeter": smeter[-1] if smeter else None,
+                    "radio_errors": radio_errors, "audio": record["audio_file"]}}
                 mono = now.timestamp()
                 try:
                     if mono >= next_dop:

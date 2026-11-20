@@ -77,6 +77,9 @@ DEFAULTS: dict[str, Any] = {
     "recording": {
         "dir": "recordings",
         "device": "USB Audio CODEC",    # част от името на аудио входа на радиото
+        # auto = изключителен WASAPI, после WDM-KS, после MME. Първите два заобикалят
+        # звуковите ефекти на Windows, които изтриват шума и слабите сигнали.
+        "host_api": "auto",
         "samplerate": 48000,
         "channels": 1,
         "keep_days": None,              # null = не се трият стари записи
@@ -97,6 +100,29 @@ class Config:
     raw: dict[str, Any]
     base_dir: Path
     errors: list[str] = field(default_factory=list)
+    source: Path | None = None      # файлът, от който е заредена (за запис от интерфейса)
+
+    def save_value(self, keys: list[str], value: Any) -> None:
+        """Записва една настройка в config.json (само нея, без стойностите по подразбиране)
+        и я прилага в паметта."""
+        from sattrack.fsutil import atomic_write_json, read_json
+        def put(target: dict) -> None:
+            d = target
+            for k in keys[:-1]:
+                d = d.setdefault(k, {})
+            d[keys[-1]] = copy.deepcopy(value)
+
+        trial = copy.deepcopy(self.raw)
+        put(trial)
+        errors = validate(trial)
+        if errors:
+            raise ConfigError("; ".join(errors))
+        path = self.source or (self.base_dir / "config.json")
+        data = read_json(path, {}) or {}
+        put(data)
+        atomic_write_json(path, data)
+        put(self.raw)
+        self.source = path
 
     # Удобни достъпи -------------------------------------------------------
     def section(self, name: str) -> dict[str, Any]:
@@ -177,7 +203,7 @@ def load_config(path: str | Path | None = None) -> Config:
             raise ConfigError(f"Грешен JSON в {p}, ред {e.lineno}, колона {e.colno}: {e.msg}") from None
         if not isinstance(user, dict):
             raise ConfigError(f"{p}: очаква се JSON обект на най-горно ниво.")
-        cfg = Config(deep_merge(DEFAULTS, user), p.resolve().parent)
+        cfg = Config(deep_merge(DEFAULTS, user), p.resolve().parent, source=p.resolve())
     errors = validate(cfg.raw)
     if errors:
         raise ConfigError("Грешки в конфигурацията:\n  - " + "\n  - ".join(errors))
@@ -217,6 +243,8 @@ def validate(raw: dict[str, Any]) -> list[str]:
     if raw["radio"].get("baudrate") not in (4800, 9600, 19200, 38400):
         errs.append("radio.baudrate трябва да е 4800, 9600, 19200 или 38400 (менюто CAT RATE на радиото)")
     num("radio", "squelch", 0, 100, allow_none=True)
+    if raw["recording"].get("host_api") not in ("auto", "wasapi-exclusive", "wdm-ks", "mme"):
+        errs.append("recording.host_api трябва да е auto, wasapi-exclusive, wdm-ks или mme")
     if raw["radio"].get("stopbits") not in (1, 2):
         errs.append("radio.stopbits трябва да е 1 или 2")
     if raw["passes"].get("overlap_rule") not in ("max_elevation", "first", "longest"):

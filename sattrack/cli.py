@@ -134,17 +134,12 @@ def cmd_audio_devices(cfg, args) -> int:
 
 
 def _run(cfg, args, only_norad=None) -> int:
-    from sattrack.controls import Controls
-    from sattrack.passlog import PassLog
-    from sattrack.radio import make_radio
-    from sattrack.recorder import NullRecorder, WavRecorder
-    from sattrack.scheduler import RealClock, Scheduler, SimClock
+    from sattrack.app import build_scheduler
+    from sattrack.scheduler import RealClock, SimClock
     from sattrack.timecheck import clock_warning
 
     if (w := clock_warning()):
         log.warning(w)
-    r = cfg.section("recording")
-    recorder = NullRecorder() if args.dry_run else WavRecorder(r["device"], r["samplerate"], r["channels"])
     clock = RealClock()
     if args.sim_start or args.speed != 1:
         start = datetime.fromisoformat(args.sim_start) if args.sim_start else datetime.now(timezone.utc)
@@ -154,18 +149,14 @@ def _run(cfg, args, only_norad=None) -> int:
             print("Симулирано време е позволено само с --dry-run.")
             return 2
         clock = SimClock(start, args.speed)
-    controls = Controls(cfg.data_dir / "PAUSE")
-    radio = make_radio(cfg, args.dry_run)
-    passlog = PassLog(cfg, cfg.cache_dir / "dryrun") if args.dry_run else PassLog(cfg)
-    sch = Scheduler(cfg, _store(cfg), radio, recorder, passlog, controls, clock,
-                    dry_run=args.dry_run, only_norad=only_norad)
+    sch = build_scheduler(cfg, args.dry_run, clock, only_norad)
     print("Клавиши: p = пауза, r = продължи, s = прогноза, q = изход" + ("   [DRY-RUN]" if args.dry_run else ""))
     try:
         sch.run(max_passes=args.max_passes)
     except KeyboardInterrupt:
         log.info("Спиране (Ctrl+C).")
     finally:
-        radio.close()
+        sch.radio.close()
     return 0
 
 
@@ -190,6 +181,11 @@ def cmd_resume(cfg, args) -> int:
     f.unlink(missing_ok=True)
     print("Пауза изключена (ако е включена с клавиш p, натиснете r в прозореца на програмата).")
     return 0
+
+
+def cmd_gui(cfg, args) -> int:
+    from sattrack.gui import main as gui_main
+    return gui_main(["--config", str(cfg.source)] if cfg.source else [])
 
 
 def cmd_rebuild_index(cfg, args) -> int:
@@ -239,6 +235,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("pause", help="пауза на автоматиката (FR-35)").set_defaults(fn=cmd_pause)
     sub.add_parser("resume", help="край на паузата").set_defaults(fn=cmd_resume)
     sub.add_parser("rebuild-index", help="възстановява data/index.json").set_defaults(fn=cmd_rebuild_index)
+    sub.add_parser("gui", help="графичен интерфейс").set_defaults(fn=cmd_gui)
     return ap
 
 
