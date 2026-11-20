@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 
 from sattrack import __version__, catalog
 from sattrack.config import ConfigError, is_narrowband, load_config
+from sattrack.fmt import fmt_mhz
 from sattrack.logsetup import setup_logging
 
 log = logging.getLogger("sattrack")
@@ -48,7 +49,7 @@ def cmd_satellites(cfg, args) -> int:
     print(f"{'NORAD':>6}  {'Име':20} {'Честота MHz':>11} {'Режим':6} {'Чут':>4} Източник  "
           f"{'Предавател':40} AMSAT")
     for s in sel:
-        print(f"{s.norad_id:>6}  {s.name[:20]:20} {s.frequency_hz / 1e6:11.4f} {s.mode:6} "
+        print(f"{s.norad_id:>6}  {s.name[:20]:20} {fmt_mhz(s.frequency_hz):>11} {s.mode:6} "
               f"{s.activity if s.activity is not None else '-':>4} {s.source:8}  "
               f"{(s.transmitter or '')[:40]:40} {', '.join(matches.get(s.norad_id, []))}")
     hrs = cfg.section("data")["activity_hours"]
@@ -89,7 +90,7 @@ def cmd_radio_test(cfg, args) -> int:
             rid = radio.identify()
             print(f"ID: {rid}" + ("  (FT-991A)" if rid == FT991A_ID else "  (НЕ е FT-991A!)"))
             f0, m0 = radio.get_freq(), radio.get_mode()
-            print(f"VFO-A: {f0 / 1e6:.6f} MHz, режим {m0}, S-метър {radio.read_smeter()}")
+            print(f"VFO-A: {fmt_mhz(f0)} MHz, режим {m0}, S-метър {radio.read_smeter()}")
             if args.set_freq:
                 target = int(round(args.set_freq * 1e6))
                 radio.set_freq(target)

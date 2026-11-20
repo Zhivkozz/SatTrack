@@ -10,6 +10,7 @@ from statistics import mean
 
 from sattrack import catalog
 from sattrack.config import is_narrowband
+from sattrack.fmt import fmt_mhz
 from sattrack.controls import Controls
 from sattrack.doppler import DopplerGate, rx_frequency
 from sattrack.passlog import (STATUS_ABORTED, STATUS_COMPLETE, STATUS_IN_PROGRESS, PassLog)
@@ -171,7 +172,7 @@ class Scheduler:
         try:
             rid = self.radio.identify()
             freq = self.radio.get_freq()
-            log.info("Радиото отговаря: ID %s, VFO-A %.4f MHz", rid, freq / 1e6)
+            log.info("Радиото отговаря: ID %s, VFO-A %s MHz", rid, fmt_mhz(freq))
             return True
         except (RadioError, ValueError) as e:
             log.warning("Радиото не отговаря: %s. Програмата продължава; ще опита отново.", e)
@@ -268,7 +269,7 @@ class Scheduler:
         assert self.predictor is not None
         dp = self.cfg.doppler_params(s.mode)
         gate = DopplerGate(dp["threshold_hz"])
-        log.info("=== %s: %.4f MHz %s, макс. %.1f°, до %s ===", s.name, s.frequency_hz / 1e6,
+        log.info("=== %s: %s MHz %s, макс. %.1f°, до %s ===", s.name, fmt_mhz(s.frequency_hz),
                  s.mode, p.max_elevation_deg, p.los.astimezone(self.passlog.tz).strftime("%H:%M:%S"))
 
         now = self.clock.now()
@@ -359,8 +360,8 @@ class Scheduler:
                         log.warning("Грешка с радиото (%d): %s", radio_errors, e)
                 if mono >= next_stat:
                     next_stat = mono + STATUS_INTERVAL_S
-                    log.info("%s el %5.1f° az %5.1f° f %.4f MHz (%+.0f Hz) S %s", s.name, el, az,
-                             f / 1e6, f - s.frequency_hz, smeter[-1] if smeter else "-")
+                    log.info("%s el %5.1f° az %5.1f° f %s MHz (%+.0f Hz) S %s", s.name, el, az,
+                             fmt_mhz(f), f - s.frequency_hz, smeter[-1] if smeter else "-")
                 self.clock.sleep(min(dp["interval_s"], SMETER_INTERVAL_S, 1.0))
         finally:
             try:

@@ -28,6 +28,7 @@ from zoneinfo import ZoneInfo
 
 from sattrack import __version__, catalog
 from sattrack.config import ConfigError, load_config
+from sattrack.fmt import fmt_mhz
 from sattrack.fsutil import read_json
 from sattrack.logsetup import setup_logging
 from sattrack.predict import Pass, Predictor, choose_non_overlapping
@@ -376,12 +377,12 @@ class App:
                 sent = live.get("sent")
                 thr = self.cfg.doppler_params(p.sat.mode)["threshold_hz"]
                 if sent:
-                    v["freq"].configure(text=f"{sent / 1e6:.6f} MHz")
-                    v["calc"].configure(text=f"{live['freq'] / 1e6:.6f} MHz   (разлика {sent - live['freq']:+.0f} Hz,"
+                    v["freq"].configure(text=f"{fmt_mhz(sent)} MHz")
+                    v["calc"].configure(text=f"{fmt_mhz(live['freq'])} MHz   (разлика {sent - live['freq']:+.0f} Hz,"
                                              f" нова честота се праща при > {thr} Hz)")
                 else:
                     v["freq"].configure(text="—")
-                    v["calc"].configure(text=f"{live['freq'] / 1e6:.6f} MHz")
+                    v["calc"].configure(text=f"{fmt_mhz(live['freq'])} MHz")
                 v["offset"].configure(text=f"{live['offset']:+.0f} Hz")
                 v["el"].configure(text=f"{live['el']:.1f}°")
                 v["az"].configure(text=f"{live['az']:.0f}°")
@@ -389,7 +390,7 @@ class App:
                 self.sm_bar["value"] = sm or 0
                 self.sm_lbl.configure(text="—" if sm is None else str(sm))
                 v["audio"].configure(text=Path(live["audio"]).name if live.get("audio") else "без запис")
-            v["mode"].configure(text=f"{p.sat.mode}  ({p.sat.frequency_hz / 1e6:.4f} MHz номинално)")
+            v["mode"].configure(text=f"{p.sat.mode}  ({fmt_mhz(p.sat.frequency_hz)} MHz номинално)")
             total = max(1.0, (p.los - p.aos).total_seconds())
             done = (now - p.aos).total_seconds()
             self.pass_bar["value"] = max(0, min(1000, 1000 * done / total))
@@ -410,7 +411,7 @@ class App:
                 self.st_sub.configure(text=f"преминава в момента, до {self.local(nxt.los, '%H:%M')} "
                                            f"(още {fmt_td(nxt.los - now)})  •  макс. {nxt.max_elevation_deg:.0f}°"
                                            + ("" if self.running else "  •  натиснете ▶ Старт за запис"))
-                v["mode"].configure(text=f"{nxt.sat.mode}  {nxt.sat.frequency_hz / 1e6:.4f} MHz")
+                v["mode"].configure(text=f"{nxt.sat.mode}  {fmt_mhz(nxt.sat.frequency_hz)} MHz")
                 self.pass_lbl.configure(text="")
                 pos = None
                 pred = self.predictor
@@ -424,7 +425,7 @@ class App:
                 self.st_sub.configure(text=f"в {self.local(nxt.aos, '%H:%M')} (след {fmt_td(wait)})  •  "
                                            f"макс. {nxt.max_elevation_deg:.0f}°  •  "
                                            f"{fmt_td(nxt.los - nxt.aos)} мин")
-                v["mode"].configure(text=f"{nxt.sat.mode}  {nxt.sat.frequency_hz / 1e6:.4f} MHz")
+                v["mode"].configure(text=f"{nxt.sat.mode}  {fmt_mhz(nxt.sat.frequency_hz)} MHz")
                 self.pass_lbl.configure(text="")
                 self.sky.show(self._pass_track(nxt), None, min_el,
                               f"{nxt.sat.name} — {self.local(nxt.aos, '%H:%M')}")
@@ -441,7 +442,7 @@ class App:
             for iid, p in zip(ids, upcoming):
                 self.next_tree.insert("", "end", iid=iid, values=(
                     self.local(p.aos, "%a %d.%m  %H:%M"), p.sat.name, f"{p.max_elevation_deg:.0f}°",
-                    p.sat.mode, f"{p.sat.frequency_hz / 1e6:.4f}"))
+                    p.sat.mode, f"{fmt_mhz(p.sat.frequency_hz)}"))
 
     # ---------------- Управление ----------------
     def start(self) -> None:
@@ -540,7 +541,7 @@ class App:
         self.fc_tree = ttk.Treeview(body, columns=cols, show="headings", selectmode="browse")
         self._columns(self.fc_tree, (("date", "Дата", 80), ("aos", "Начало", 62), ("tca", "Връх", 55),
                                      ("los", "Край", 55), ("el", "Макс.", 55), ("dur", "Мин.", 45),
-                                     ("sat", "Сателит", 150), ("freq", "MHz", 80), ("mode", "Режим", 58),
+                                     ("sat", "Сателит", 150), ("freq", "MHz", 90), ("mode", "Режим", 58),
                                      ("rec", "Запис", 115)), stretch=("sat",))
         sb = ttk.Scrollbar(body, orient="vertical", command=self.fc_tree.yview)
         self.fc_tree.configure(yscrollcommand=sb.set)
@@ -603,7 +604,7 @@ class App:
                 self.fc_tree.insert("", "end", iid=str(i), tags=(tag,), values=(
                     self.local(p.aos, "%a %d.%m"), self.local(p.aos, "%H:%M"), self.local(p.tca, "%H:%M"),
                     self.local(p.los, "%H:%M"), f"{p.max_elevation_deg:.0f}°", f"{p.duration_s / 60:.0f}",
-                    p.sat.name, f"{p.sat.frequency_hz / 1e6:.4f}", p.sat.mode, rec))
+                    p.sat.name, f"{fmt_mhz(p.sat.frequency_hz)}", p.sat.mode, rec))
             self.fc_info.configure(text=f"{len(self.chosen)} преминавания за запис от {len(self.forecast)} показани.  "
                                         "Изберете ред, за да видите траекторията.")
             first = next((str(i) for i, p in enumerate(self.forecast) if id(p) in chosen_ids), None)
@@ -634,7 +635,7 @@ class App:
         cols = ("on", "norad", "name", "freq", "mode", "heard", "src", "tx")
         self.sat_tree = ttk.Treeview(tab, columns=cols, show="headings", selectmode="browse")
         self._columns(self.sat_tree, (("on", "Вкл.", 45), ("norad", "NORAD", 65), ("name", "Сателит", 165),
-                                      ("freq", "MHz", 80), ("mode", "Режим", 58), ("heard", "Чут 24 ч", 75),
+                                      ("freq", "MHz", 90), ("mode", "Режим", 58), ("heard", "Чут 24 ч", 75),
                                       ("src", "Източник", 75), ("tx", "Предавател (SatNOGS)", 300)),
                       stretch=("tx",))
         self.sat_tree.pack(fill="both", expand=True)
@@ -653,7 +654,7 @@ class App:
         self.sat_tree.delete(*self.sat_tree.get_children())
         for s in sel:
             self.sat_tree.insert("", "end", iid=str(s.norad_id), tags=(() if s.enabled else ("off",)), values=(
-                "✓" if s.enabled else "—", s.norad_id, s.name, f"{s.frequency_hz / 1e6:.4f}", s.mode,
+                "✓" if s.enabled else "—", s.norad_id, s.name, f"{fmt_mhz(s.frequency_hz)}", s.mode,
                 "-" if s.activity is None else s.activity,
                 "ръчен" if s.source == "manual" else "авто", s.transmitter or ""))
         on = sum(1 for s in sel if s.enabled)
@@ -999,7 +1000,7 @@ class App:
             try:
                 rid = radio.identify()
                 return (f"ID: {rid}{'  (FT-991A)' if rid == '0670' else '  (НЕ е FT-991A!)'}\n"
-                        f"VFO-A: {radio.get_freq() / 1e6:.6f} MHz, режим {radio.get_mode()}\n"
+                        f"VFO-A: {fmt_mhz(radio.get_freq())} MHz, режим {radio.get_mode()}\n"
                         f"S-метър: {radio.read_smeter()}, шумоподтискане: {radio.get_squelch()}")
             finally:
                 if own:
@@ -1031,7 +1032,7 @@ class App:
                     if m0 in MODE_CODES:
                         radio.set_mode(m0)
                     radio.set_freq(f0)
-                return f"Върнато: {f0 / 1e6:.6f} MHz {m0}"
+                return f"Върнато: {fmt_mhz(f0)} MHz {m0}"
             finally:
                 if own:
                     radio.close()

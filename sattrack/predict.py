@@ -11,6 +11,7 @@ from skyfield.api import EarthSatellite, load, wgs84
 from skyfield.iokit import parse_tle_file
 
 from sattrack.catalog import SatEntry
+from sattrack.fmt import fmt_mhz
 
 _ts = load.timescale(builtin=True)
 
@@ -138,7 +139,7 @@ def format_passes(passes: list[Pass], tz: str, chosen: list[Pass] | None = None)
             f"{mark} {a:%Y-%m-%d} {a:%H:%M:%S} {p.tca.astimezone(z):%H:%M:%S} "
             f"{p.los.astimezone(z):%H:%M:%S} {p.max_elevation_deg:5.1f} "
             f"{p.duration_s / 60:4.1f}  {p.sat.name[:18]:18} "
-            f"{p.sat.frequency_hz / 1e6:11.4f} {p.sat.mode}")
+            f"{fmt_mhz(p.sat.frequency_hz):>11} {p.sat.mode}")
     if chosen_ids is not None:
         rows.append("* = ще се записва, ▶ = тече в момента, - = пропуска се заради припокриване")
     return "\n".join(rows)

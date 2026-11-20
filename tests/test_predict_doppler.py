@@ -63,3 +63,11 @@ def test_overlap_rule():
              datetime(2026, 1, 1, 10, 16, tzinfo=timezone.utc), 60)
     assert choose_non_overlapping([a, b], "max_elevation") == [b]
     assert choose_non_overlapping([a, b], "first") == [a]
+
+
+def test_fmt_mhz():
+    from sattrack.fmt import fmt_mhz
+    assert fmt_mhz(145_800_000) == "145,800,00"
+    assert fmt_mhz(145_803_456) == "145,803,46"
+    assert fmt_mhz(437_025_000) == "437,025,00"
+    assert fmt_mhz(145_999_996) == "146,000,00"
