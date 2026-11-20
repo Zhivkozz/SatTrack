@@ -60,12 +60,22 @@ def test_gui_builds_and_shows_data(app):
 
 def test_gui_refresh_shows_result(app):
     from sattrack.sources import RefreshReport
-    app.store.refresh = lambda: RefreshReport(
-        ok={"tle": True, "transmitters": False, "activity": True},
-        errors={"transmitters": "Connection to db.satnogs.org timed out."})
+
+    def slow_refresh():
+        time.sleep(1.2)
+        return RefreshReport(ok={"tle": True, "transmitters": False, "activity": True},
+                             errors={"transmitters": "Connection to db.satnogs.org timed out."})
+
+    app.store.refresh = slow_refresh
     pump(app)
     app.refresh_data()
+    app.root.update()
+    assert "сверява се" in app.refresh_lbl.cget("text")      # индикаторът тече
+    assert app.refresh_pb.winfo_manager() == "pack"
+    assert "disabled" in app.btn_refresh.state()
     pump(app, 5)
+    assert "Готово" in app.refresh_lbl.cget("text")          # и показва края
+    assert app.refresh_pb.winfo_manager() == ""
     text = app.out_txt.get("1.0", "end")
     assert "✓ Орбити (CelesTrak): обновено" in text
     assert "✗ Честоти (SatNOGS DB): сървърът не отговаря" in text

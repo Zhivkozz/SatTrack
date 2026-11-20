@@ -801,7 +801,13 @@ class App:
         self.data_warn = tk.Label(df, text="", fg="#b45309", justify="left", wraplength=380)
         self.data_warn.grid(row=3, column=0, columnspan=2, sticky="w", pady=(6, 0))
         self.btn_refresh = ttk.Button(df, text="⟳ Обнови данните сега", command=self.refresh_data)
-        self.btn_refresh.grid(row=4, column=0, columnspan=2, sticky="w", pady=(8, 0))
+        self.btn_refresh.grid(row=4, column=0, sticky="w", pady=(8, 0))
+        ind = ttk.Frame(df)
+        ind.grid(row=4, column=1, sticky="w", padx=8, pady=(8, 0))
+        self.refresh_pb = ttk.Progressbar(ind, mode="indeterminate", length=self.px(110))
+        self.refresh_lbl = tk.Label(ind, text="", font=FONT_BOLD)
+        self.refresh_lbl.pack(side="right", padx=(8, 0))
+        self._refresh_t0: float | None = None
 
         rf = ttk.LabelFrame(top, text="Радио и аудио", padding=10)
         rf.pack(side="left", fill="both", expand=True, padx=(10, 0))
@@ -846,6 +852,40 @@ class App:
         warns = self.store.freshness_warnings()
         self.data_warn.configure(text="\n".join("⚠ " + w for w in warns))
 
+    # --- индикатор за сверката ---
+    def _refresh_busy_start(self) -> None:
+        self._refresh_t0 = time.time()
+        self.btn_refresh.state(["disabled"])
+        self.refresh_pb.pack(side="left", before=self.refresh_lbl)
+        self.refresh_pb.start(12)
+        self._refresh_busy_tick()
+
+    def _refresh_busy_tick(self) -> None:
+        if self._refresh_t0 is None:
+            return
+        secs = int(time.time() - self._refresh_t0)
+        waiting = (self.running and self.sched and self.sched._refresh_req)
+        if waiting and self.state() == "tracking":
+            text = f"чака края на записа… {secs} s"
+        else:
+            text = f"сверява се… {secs} s"
+        self.refresh_lbl.configure(text=text, fg="#2563eb")
+        self.root.after(1000, self._refresh_busy_tick)
+
+    def _refresh_busy_done(self, ok: bool | None) -> None:
+        secs = int(time.time() - (self._refresh_t0 or time.time()))
+        self._refresh_t0 = None
+        self.refresh_pb.stop()
+        self.refresh_pb.pack_forget()
+        self.btn_refresh.state(["!disabled"])
+        now = datetime.now().strftime("%H:%M")
+        if ok is True:
+            self.refresh_lbl.configure(text=f"✓ Готово в {now} ({secs} s)", fg="#15803d")
+        elif ok is False:
+            self.refresh_lbl.configure(text=f"⚠ Готово в {now}, с грешки — вижте „Резултат“", fg="#c2410c")
+        else:
+            self.refresh_lbl.configure(text="✗ Прекъснато", fg="#b91c1c")
+
     def _show_refresh_report(self, rep, err=None) -> None:
         names = {"tle": "Орбити (CelesTrak)", "transmitters": "Честоти (SatNOGS DB)",
                  "activity": "Активност (AMSAT)"}
@@ -861,12 +901,13 @@ class App:
                     self._out(f"  ✗ {name}: {short} — ползва се кешът")
             self._out("Сверката приключи." if rep.all_ok else
                       "Сверката е непълна. Програмата ще опита пак по-късно.")
-        self.btn_refresh.state(["!disabled"])
+        self._refresh_busy_done(None if err is not None or rep is None else rep.all_ok)
         self._after_refresh()
 
     def refresh_data(self) -> None:
-        self.btn_refresh.state(["disabled"])
-        self.nb.select(len(self.nb.tabs()) - 1)
+        if self._refresh_t0 is not None:
+            return  # вече тече
+        self._refresh_busy_start()
         if self.running and self.sched:
             self.sched.request_refresh()
             asked = time.time()
@@ -880,7 +921,8 @@ class App:
                 elif self.running:
                     self.root.after(1000, wait)
                 else:
-                    self.btn_refresh.state(["!disabled"])
+                    self._out("Автоматиката е спряна преди сверката.")
+                    self._refresh_busy_done(None)
             self.root.after(1000, wait)
             return
         self._out("Сверка на данните (около 1 минута)…", clear=True)
