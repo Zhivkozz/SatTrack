@@ -1,7 +1,20 @@
 {
   "schema_version": 1,
-  "updated": "2026-11-20T13:51:41+00:00",
+  "updated": "2026-11-20T13:54:17+00:00",
   "selection": [
+    {
+      "norad_id": 25544,
+      "name": "ISS",
+      "frequency_hz": 145800000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "manual",
+      "transmitter": "Mode V/V FM (crew R2+3) [FM]",
+      "transmitter_uuid": "PjfcFc4PZ8M8n3thuyA6x9",
+      "activity": 30
+    },
     {
       "norad_id": 7530,
       "name": "OSCAR 7 (AO-7)",
@@ -13,7 +26,7 @@
       "source": "auto",
       "transmitter": "Mode U/V (B) TLM Beacon [CW]",
       "transmitter_uuid": "YCcdJmZyt62cx8R8fv8mTe",
-      "activity": 13
+      "activity": 17
     },
     {
       "norad_id": 43803,
@@ -27,19 +40,6 @@
       "transmitter": "U/V CW Transponder [CW]",
       "transmitter_uuid": "gWivxT7RmBwKK8WbVy6ucF",
       "activity": 11
-    },
-    {
-      "norad_id": 25544,
-      "name": "ISS",
-      "frequency_hz": 145800000,
-      "mode": "FM",
-      "filter": "normal",
-      "cw_pitch_hz": null,
-      "enabled": true,
-      "source": "manual",
-      "transmitter": "Mode V/V FM (crew R2+3) [FM]",
-      "transmitter_uuid": "PjfcFc4PZ8M8n3thuyA6x9",
-      "activity": 4
     },
     {
       "norad_id": 59112,
@@ -104,7 +104,7 @@
       "source": "auto",
       "transmitter": "Mode V/U - FM Transceiver [FM]",
       "transmitter_uuid": "f7MZKobjSKakAWQsEoLmkq",
-      "activity": 21
+      "activity": 19
     },
     {
       "norad_id": 27607,
@@ -117,7 +117,7 @@
       "source": "auto",
       "transmitter": "Mode V/U FM Voice CTCSS 67.0 Hz [FM]",
       "transmitter_uuid": "Y9P45XRJH8yAsbDDe4qHnE",
-      "activity": 16
+      "activity": 17
     },
     {
       "norad_id": 62391,
@@ -159,19 +159,6 @@
       "activity": 2
     },
     {
-      "norad_id": 69935,
-      "name": "KOSTKA",
-      "frequency_hz": 436870000,
-      "mode": "FM",
-      "filter": "normal",
-      "cw_pitch_hz": null,
-      "enabled": true,
-      "source": "auto",
-      "transmitter": "KOSTKA UHF AX.25 [GFSK]",
-      "transmitter_uuid": "nPPib2bitRKHSXBPwNMfbQ",
-      "activity": 1
-    },
-    {
       "norad_id": 57189,
       "name": "VIZARD-METEO (RS38S)",
       "frequency_hz": 437825000,
@@ -183,6 +170,19 @@
       "transmitter": "Mode U - GMSK 2k4 (USP FEC) TLM [GMSK USP]",
       "transmitter_uuid": "arw4iGWiTZDF8yQ64UBZgE",
       "activity": 1
+    },
+    {
+      "norad_id": 57184,
+      "name": "MONITOR-2 (RS39S)",
+      "frequency_hz": 435000000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "Mode U - DOKA 9k6 [DOKA]",
+      "transmitter_uuid": "HrSQKgXUX3mVgrNm556ZDo",
+      "activity": null
     }
   ],
   "candidates": {

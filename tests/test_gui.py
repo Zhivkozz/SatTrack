@@ -83,6 +83,19 @@ def test_gui_refresh_shows_result(app):
     assert "disabled" not in app.btn_refresh.state()
 
 
+def test_gui_delete_record(app, cfg):
+    from sattrack.passlog import PassLog
+    pl = PassLog(cfg)
+    pl.write("2026-11-21T04-12_ISS", {"status": "complete", "satellite": {"name": "ISS", "norad_id": 25544},
+                                      "start": "2026-11-21T04:12:00+02:00", "audio_file": None})
+    app.refresh_records()
+    assert len(app.rec_tree.get_children()) == 1
+    app.rec_tree.selection_set("0")
+    app.delete_record(confirm=False)
+    assert app.rec_tree.get_children() == ()
+    assert not (pl.dir / "2026-11-21T04-12_ISS.json").exists()
+
+
 def test_gui_toggle_satellite_persists(app, cfg):
     app.sat_tree.selection_set("25544")
     app.toggle_sat()

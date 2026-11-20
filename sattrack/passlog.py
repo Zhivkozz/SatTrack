@@ -85,6 +85,32 @@ class PassLog:
         idx["passes"].sort(key=lambda p: p.get("start") or "")
         atomic_write_json(self.index_path, idx)
 
+    def delete(self, stem: str) -> list[Path]:
+        """Delete a pass record: its JSON, its audio file and its index entry.
+
+        Returns the files that were actually removed.
+        """
+        path = self.dir / f"{stem}.json"
+        rec = read_json(path, {}) or {}
+        if rec.get("status") == STATUS_IN_PROGRESS:
+            raise ValueError("the pass is still being recorded")
+        removed: list[Path] = []
+        audio = rec.get("audio_file")
+        if audio:
+            ap = self.cfg.path(audio)
+            if ap.exists():
+                ap.unlink()
+                removed.append(ap)
+        if path.exists():
+            path.unlink()
+            removed.append(path)
+        idx = read_json(self.index_path)
+        if idx:
+            idx["passes"] = [p for p in idx["passes"] if p["file"] != f"passes/{stem}.json"]
+            atomic_write_json(self.index_path, idx)
+        log.info("Изтрит запис: %s", ", ".join(p.name for p in removed) or stem)
+        return removed
+
     def rebuild_index(self) -> int:
         entries = []
         for p in sorted(self.dir.glob("*.json")):

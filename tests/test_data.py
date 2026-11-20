@@ -103,6 +103,36 @@ def test_passlog_atomic_index_and_recovery(cfg, tmp_path):
     assert pl.rebuild_index() == 1
 
 
+def _make_pass(cfg, pl, stem, status="complete"):
+    wav = cfg.recordings_dir / f"{stem}.wav"
+    wav.parent.mkdir(parents=True, exist_ok=True)
+    with wave.open(str(wav), "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(8000)
+        w.writeframes(b"\0\0" * 10)
+    pl.write(stem, {"status": status, "satellite": {"name": "ISS", "norad_id": 25544},
+                    "start": "2026-11-21T04:12:00+02:00", "audio_file": pl.rel(wav)})
+    return wav
+
+
+def test_delete_pass_removes_json_audio_and_index(cfg):
+    pl = PassLog(cfg)
+    wav = _make_pass(cfg, pl, "2026-11-21T04-12_ISS")
+    _make_pass(cfg, pl, "2026-11-21T06-00_ISS")
+    removed = pl.delete("2026-11-21T04-12_ISS")
+    assert {p.name for p in removed} == {"2026-11-21T04-12_ISS.wav", "2026-11-21T04-12_ISS.json"}
+    assert not wav.exists()
+    idx = json.loads(pl.index_path.read_text(encoding="utf-8"))
+    assert [p["file"] for p in idx["passes"]] == ["passes/2026-11-21T06-00_ISS.json"]
+
+
+def test_delete_refuses_pass_in_progress(cfg):
+    pl = PassLog(cfg)
+    wav = _make_pass(cfg, pl, "2026-11-21T04-12_ISS", status=STATUS_IN_PROGRESS)
+    with pytest.raises(ValueError):
+        pl.delete("2026-11-21T04-12_ISS")
+    assert wav.exists()
+
+
 def test_repair_wav_rejects_non_wav(tmp_path):
     p = tmp_path / "x.wav"
     p.write_bytes(b"not a wav")

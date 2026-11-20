@@ -700,6 +700,7 @@ class App:
         ttk.Button(bar, text="Отвори в плейър", command=self.open_player).pack(side="left", padx=4)
         ttk.Button(bar, text="Папка със записите", command=self.open_folder).pack(side="left", padx=4)
         ttk.Button(bar, text="⟳ Обнови", command=self.refresh_records).pack(side="right")
+        ttk.Button(bar, text="🗑 Изтрий", command=self.delete_record).pack(side="right", padx=(0, 16))
 
         paned = ttk.PanedWindow(tab, orient="horizontal")
         paned.pack(fill="both", expand=True)
@@ -711,6 +712,7 @@ class App:
         self.rec_tree.tag_configure("bad", foreground="#c2410c")
         self.rec_tree.bind("<<TreeviewSelect>>", self._on_rec_select)
         self.rec_tree.bind("<Double-1>", lambda e: self.play())
+        self.rec_tree.bind("<Delete>", lambda e: self.delete_record())
         paned.add(self.rec_tree, weight=3)
         self.rec_detail = ScrolledText(paned, font=FONT_MONO, width=48, state="disabled")
         paned.add(self.rec_detail, weight=2)
@@ -757,6 +759,43 @@ class App:
         if rec:
             self.rec_detail.insert("end", json.dumps(rec, ensure_ascii=False, indent=2))
         self.rec_detail.configure(state="disabled")
+
+    def delete_record(self, confirm: bool = True) -> None:
+        """Delete the selected pass (JSON + WAV + index entry) after confirmation."""
+        from sattrack.passlog import PassLog
+        sel = self.rec_tree.selection()
+        if not sel:
+            messagebox.showinfo("SatTrack", "Изберете запис от списъка.")
+            return
+        i = int(sel[0])
+        entry = self.records[i]
+        stem = Path(entry["file"]).stem
+        rec = self._selected_record() or {}
+        if rec.get("status") == "in_progress":
+            messagebox.showwarning("SatTrack", "Този запис тече в момента и не може да се изтрие.")
+            return
+        audio = self.cfg.path(rec["audio_file"]) if rec.get("audio_file") else None
+        size = audio.stat().st_size / 1e6 if audio and audio.exists() else 0
+        what = f"{entry.get('satellite')}, {self.rec_tree.set(sel[0], 'when')}"
+        files = f"\n\nАудио: {audio.name} ({size:.0f} MB)" if size else "\n\n(без аудио файл)"
+        if confirm and not messagebox.askyesno(
+                "Изтриване на запис", f"Да се изтрие ли записът\n{what}?{files}\nДанни: {stem}.json\n\n"
+                                      "Това не може да се върне.", icon="warning"):
+            return
+        self.stop_play()  # the player may hold the WAV file open
+        try:
+            PassLog(self.cfg).delete(stem)
+        except Exception as e:
+            messagebox.showerror("SatTrack", f"Не може да се изтрие: {e}")
+            return
+        self.refresh_records()
+        self._on_rec_select()
+        # keep the selection near the deleted row
+        rows = self.rec_tree.get_children()
+        if rows:
+            nxt = rows[min(i, len(rows) - 1)]
+            self.rec_tree.selection_set(nxt)
+            self.rec_tree.focus(nxt)
 
     def play(self) -> None:
         p = self._selected_audio()
