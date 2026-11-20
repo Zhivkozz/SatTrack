@@ -627,9 +627,7 @@ class App:
         bar = ttk.Frame(tab)
         bar.pack(fill="x", pady=(0, 8))
         ttk.Button(bar, text="Включи / изключи избрания", command=self.toggle_sat).pack(side="left")
-        self.btn_confirm = ttk.Button(bar, text="✓ Потвърди списъка", command=self.confirm_sats)
-        self.btn_confirm.pack(side="left", padx=8)
-        self.sat_info = tk.Label(bar, text="", font=FONT_BOLD)
+        self.sat_info = tk.Label(bar, text="", font=FONT, fg="#4b5563")
         self.sat_info.pack(side="left", padx=12)
 
         cols = ("on", "norad", "name", "freq", "mode", "heard", "src", "tx")
@@ -642,9 +640,10 @@ class App:
         self.sat_tree.tag_configure("off", foreground="#9ca3af")
         self.sat_tree.bind("<Double-1>", lambda e: self.toggle_sat())
         ttk.Label(tab, foreground="#4b5563", wraplength=1000, justify="left", text=(
-            "Списъкът се съставя автоматично: активни предаватели на 2 m от SatNOGS DB, подредени по "
-            "доклади „чут“ в AMSAT status. Двоен клик включва или изключва сателит (записва се в "
-            "config.json). Честота и режим на ръка се задават в config.json → satellites.overrides."
+            "Списъкът се съставя автоматично при всяка сверка: активни предаватели в разрешените обхвати "
+            "от SatNOGS DB, подредени по доклади „чут“ в AMSAT status. Двоен клик включва или изключва "
+            "сателит (записва се в config.json). Честота и режим на ръка се задават в "
+            "config.json → satellites.overrides."
         )).pack(fill="x", pady=(8, 0))
 
     def refresh_satellites(self) -> None:
@@ -656,10 +655,10 @@ class App:
                 "✓" if s.enabled else "—", s.norad_id, s.name, f"{s.frequency_hz / 1e6:.4f}", s.mode,
                 "-" if s.activity is None else s.activity,
                 "ръчен" if s.source == "manual" else "авто", s.transmitter or ""))
-        if data.get("confirmed"):
-            self.sat_info.configure(text="Списъкът е потвърден.", fg="#15803d")
-        else:
-            self.sat_info.configure(text="Списъкът не е потвърден — прегледайте го.", fg="#c2410c")
+        on = sum(1 for s in sel if s.enabled)
+        upd = data.get("updated")
+        when = f", обновен {self.local(datetime.fromisoformat(upd), '%d.%m %H:%M')}" if upd else ""
+        self.sat_info.configure(text=f"{len(sel)} сателита, {on} включени{when}")
 
     def _rebuild_selection(self) -> None:
         catalog.update_selection(self.cfg, self.store.load_transmitters(), self.store.load_activity(),
@@ -689,17 +688,6 @@ class App:
         self.refresh_satellites()
         self.sat_tree.selection_set(str(norad))
         self._after_settings_change()
-
-    def confirm_sats(self) -> None:
-        from sattrack.fsutil import atomic_write_json
-        path = catalog.selection_path(self.cfg)
-        data = read_json(path, {}) or {}
-        if not data:
-            return
-        data["confirmed"] = True
-        atomic_write_json(path, data)
-        log.info("Списъкът със сателити е потвърден.")
-        self.refresh_satellites()
 
     # ---------------- Записи ----------------
     def _build_records_tab(self) -> None:

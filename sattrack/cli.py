@@ -38,7 +38,6 @@ def cmd_update(cfg, args) -> int:
 
 
 def cmd_satellites(cfg, args) -> int:
-    from sattrack.fsutil import atomic_write_json, read_json
     store = _store(cfg)
     if not store.load_transmitters():
         print("Няма данни. Изпълнете първо `sattrack update`.")
@@ -53,16 +52,8 @@ def cmd_satellites(cfg, args) -> int:
               f"{s.activity if s.activity is not None else '-':>4} {s.source:8}  "
               f"{(s.transmitter or '')[:40]:40} {', '.join(matches.get(s.norad_id, []))}")
     hrs = cfg.section("data")["activity_hours"]
-    print(f"\n„Чут“ = доклади в AMSAT status за последните {hrs} ч; „-“ = AMSAT не следи сателита.")
-    path = catalog.selection_path(cfg)
-    data = read_json(path)
-    if args.confirm:
-        data["confirmed"] = True
-        atomic_write_json(path, data)
-        print("\nСписъкът е потвърден.")
-    elif not data.get("confirmed"):
-        print("\nСписъкът не е потвърден. Проверете го и изпълнете `sattrack satellites --confirm`.\n"
-              "Промени се правят в config.json → satellites.overrides.")
+    print(f"\n„Чут“ = доклади в AMSAT status за последните {hrs} ч; „-“ = AMSAT не следи сателита.\n"
+          "Промени се правят в config.json → satellites.overrides (или в прозореца, раздел „Сателити“).")
     return 0
 
 
@@ -204,9 +195,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("update", help="сверка на TLE, честоти и активност").set_defaults(fn=cmd_update)
 
-    p = sub.add_parser("satellites", help="списък за слушане")
-    p.add_argument("--confirm", action="store_true", help="потвърждава текущия списък (FR-05)")
-    p.set_defaults(fn=cmd_satellites)
+    sub.add_parser("satellites", help="списък за слушане").set_defaults(fn=cmd_satellites)
 
     p = sub.add_parser("passes", help="прогноза за преминавания")
     p.add_argument("--hours", type=float)

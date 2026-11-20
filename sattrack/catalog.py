@@ -219,7 +219,6 @@ def update_selection(cfg, transmitters, activity, tle_text) -> tuple[list[SatEnt
     atomic_write_json(path, {
         "schema_version": SCHEMA_VERSION,
         "updated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "confirmed": bool(old and old.get("confirmed")) and not changes,
         "selection": [asdict(e) for e in sel],
         "candidates": cands,
     })
