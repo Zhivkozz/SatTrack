@@ -1,15 +1,4 @@
 {
   "schema_version": 1,
-  "passes": [
-    {
-      "file": "passes/2026-11-20T14-33_KNACKSAT-2.json",
-      "satellite": "KNACKSAT-2",
-      "norad_id": 67683,
-      "start": "2026-11-20T14:33:11+02:00",
-      "max_elevation_deg": 40.6,
-      "mode": "FM",
-      "status": "complete",
-      "s_meter_max": 4
-    }
-  ]
+  "passes": []
 }

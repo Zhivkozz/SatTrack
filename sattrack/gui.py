@@ -152,6 +152,7 @@ class App:
         logging.getLogger().addHandler(handler)
 
         root.title(f"SatTrack {__version__} — {cfg.station['name']}")
+        set_window_icon(root)
         self.sc = max(1.0, root.winfo_fpixels("1i") / 96.0)  # мащабиране на Windows (125 %, 150 %…)
         w = min(self.px(1120), root.winfo_screenwidth() - 40)
         h = min(self.px(860), int(root.winfo_screenheight() * 0.85))  # да не влиза под лентата на задачите
@@ -1089,6 +1090,21 @@ class App:
         self.bg("Тест на аудиото", work, lambda res, err: self._out(res if err is None else f"ГРЕШКА: {err}"))
 
 
+ASSETS = Path(__file__).resolve().parent / "assets"
+
+
+def set_window_icon(root: tk.Tk) -> None:
+    """Window/taskbar icon: .ico for Windows (all sizes), PNG as a fallback."""
+    try:
+        if sys.platform == "win32":
+            root.iconbitmap(default=str(ASSETS / "sattrack.ico"))
+        else:
+            root._icon_img = tk.PhotoImage(file=str(ASSETS / "sattrack.png"))  # keep a reference
+            root.iconphoto(True, root._icon_img)
+    except Exception as e:  # a missing icon must never stop the program
+        log.debug("icon: %s", e)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="sattrack-gui")
     ap.add_argument("--config", "-c")
@@ -1102,6 +1118,8 @@ def main(argv: list[str] | None = None) -> int:
         if sys.platform == "win32":
             import ctypes
             ctypes.windll.shcore.SetProcessDpiAwareness(1)  # ясен текст при мащабиране
+            # Own taskbar identity, so Windows shows the SatTrack icon instead of Python's.
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("SatTrack.GUI")
     except Exception:
         pass
     root = tk.Tk()
