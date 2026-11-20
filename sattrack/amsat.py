@@ -15,8 +15,8 @@ from datetime import datetime
 # Доклади, които означават, че сателитът е чут.
 HEARD_REPORTS = ("heard", "telemetry only", "crew active")
 
-# Етикети на режими с downlink извън 2 m — не се броят.
-_NOT_VHF = ("uhf", "/u", "/a", "/s", "/x", "5.8g", "nb]", "wb]", "dvb", "datv", "c/x")
+# Етикети на режими с downlink извън 2 m и 70 cm — не се броят никога.
+_OTHER = ("/a", "/s", "/x", "5.8g", "nb]", "wb]", "dvb", "datv", "c/x")
 
 
 def parse_names(page: str) -> list[str]:
@@ -42,14 +42,27 @@ def base_name(amsat_name: str) -> str:
     return amsat_name.split("_[", 1)[0]
 
 
-def is_vhf_downlink(amsat_name: str) -> bool:
+def label_band(amsat_name: str) -> str | None:
+    """Обхват на downlink по етикета: 'vhf', 'uhf', 'other' или None (неясно, напр. [FM])."""
     label = amsat_name[len(base_name(amsat_name)):].lower()
-    return not any(x in label for x in _NOT_VHF)
+    if any(x in label for x in _OTHER):
+        return "other"
+    if "uhf" in label or "/u" in label:
+        return "uhf"
+    if "vhf" in label or "/v" in label:
+        return "vhf"
+    return None
 
 
-def match(amsat_names: list[str], tle_name: str) -> list[str]:
+def is_vhf_downlink(amsat_name: str) -> bool:
+    return label_band(amsat_name) in ("vhf", None)
+
+
+def match(amsat_names: list[str], tle_name: str, bands=("vhf",)) -> list[str]:
+    """Имената в AMSAT за сателита, само с downlink в разрешените обхвати."""
     al = aliases(tle_name)
-    return [n for n in amsat_names if _norm(base_name(n)) in al and is_vhf_downlink(n)]
+    ok = (*bands, None)
+    return [n for n in amsat_names if _norm(base_name(n)) in al and label_band(n) in ok]
 
 
 def count_heard(reports: list[dict], since: datetime) -> int:

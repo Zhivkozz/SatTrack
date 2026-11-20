@@ -45,6 +45,19 @@ def test_band_and_selection(cfg):
     assert iss.source == "manual"
 
 
+def test_70cm_selected_per_band(cfg):
+    cfg.raw["band"]["downlink_ranges_mhz"] = [[144.0, 146.0], [430.0, 440.0]]
+    cfg.raw["selection"]["auto_count"] = 1
+    txs = [tx(25544, 145_800_000), tx(25544, 437_800_000),   # МКС: и 2 m, и 70 cm
+           tx(11111, 145_900_000), tx(22222, 437_000_000)]
+    sel = catalog.build_selection(cfg, txs, {11111: 9, 22222: 1, 25544: 0}, TLE)
+    by = {s.norad_id: s for s in sel}
+    assert by[11111].frequency_hz == 145_900_000      # най-активният на 2 m
+    assert by[22222].frequency_hz == 437_000_000      # плюс един на 70 cm
+    assert by[25544].frequency_hz == 145_800_000      # ръчният ISS остава на 2 m
+    assert cfg.amateur_bands() == ("vhf", "uhf")
+
+
 def test_change_detection(cfg):
     txs = [tx(25544, 145_800_000), tx(11111, 145_900_000)]
     catalog.update_selection(cfg, txs, {}, TLE)

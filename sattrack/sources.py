@@ -179,7 +179,7 @@ class DataStore:
         matches: dict[str, list[str]] = {}
         failures = 0
         for norad in norads:
-            found = manual.get(norad) or amsat.match(names, tle.get(norad, ""))
+            found = manual.get(norad) or amsat.match(names, tle.get(norad, ""), self.cfg.amateur_bands())
             if not found:
                 continue
             total = 0

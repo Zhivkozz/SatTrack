@@ -78,11 +78,13 @@ def candidates(cfg, transmitters: list[dict[str, Any]]) -> dict[int, list[dict[s
     return out
 
 
-def _pick_transmitter(txs: list[dict[str, Any]]) -> dict[str, Any]:
-    """Предпочитаме FM (лесно се чува), после CW, после останалото."""
+def _pick_transmitter(txs: list[dict[str, Any]], cfg=None) -> dict[str, Any]:
+    """Предпочитаме по-ниския обхват (2 m, антената е за него), после FM
+    (лесно се чува), после CW, после останалото."""
     def score(t):
         rm = satnogs_mode_to_radio(t.get("mode"))
-        return ({"FM": 0, "CW": 1}.get(rm, 2), t.get("downlink_low") or 0)
+        band = cfg.band_index(t.get("downlink_low") or 0) if cfg else 0
+        return (band if band is not None else 99, {"FM": 0, "CW": 1}.get(rm, 2), t.get("downlink_low") or 0)
     return sorted(txs, key=score)[0]
 
 
@@ -92,7 +94,7 @@ def auto_selection(cfg, transmitters, activity: dict[int, int], names: dict[int,
     for norad, txs in cands.items():
         if names and norad not in names:
             continue  # без орбитни данни не може да се прогнозира
-        t = _pick_transmitter(txs)
+        t = _pick_transmitter(txs, cfg)
         f = int(t["downlink_low"])
         if t.get("downlink_high") and t.get("type") == "Transponder":
             f = int((t["downlink_low"] + t["downlink_high"]) / 2)
@@ -103,7 +105,13 @@ def auto_selection(cfg, transmitters, activity: dict[int, int], names: dict[int,
             transmitter_uuid=t.get("uuid"), activity=activity.get(norad)))
     entries.sort(key=lambda e: (activity_rank(e.activity), -(e.activity or 0),
                                 -len(cands[e.norad_id]), e.name))
-    return entries[: cfg.section("selection")["auto_count"]]
+    # По auto_count сателита за всеки разрешен обхват, за да не се изместват
+    # (напр. 70 cm да не избута сателитите на 2 m). Редът е по обхватите в конфигурацията.
+    n = cfg.section("selection")["auto_count"]
+    out: list[SatEntry] = []
+    for band in range(len(cfg.section("band")["downlink_ranges_mhz"])):
+        out += [e for e in entries if cfg.band_index(e.frequency_hz) == band][:n]
+    return out
 
 
 def activity_rank(count: int | None) -> int:
@@ -146,10 +154,15 @@ def selection_path(cfg) -> Path:
     return cfg.data_dir / "satellites.json"
 
 
-def _candidate_summary(cfg, transmitters) -> dict[str, list[dict[str, Any]]]:
+def _candidate_summary(cfg, transmitters, names: dict[int, str] | None = None) -> dict[str, list[dict[str, Any]]]:
+    """Кандидатите за засичане на промени — само тези с орбитни данни (без TLE не
+    могат да се следят, а SatNOGS има много временни номера 98xxx/99xxx)."""
     return {str(n): sorted(({"uuid": t.get("uuid"), "downlink_hz": t.get("downlink_low"),
                              "mode": t.get("mode")} for t in txs), key=lambda x: str(x["uuid"]))
-            for n, txs in candidates(cfg, transmitters).items()}
+            for n, txs in candidates(cfg, transmitters).items() if not names or n in names}
+
+
+MAX_CHANGE_LINES = 15
 
 
 def detect_changes(old: dict[str, Any] | None, new_cands: dict[str, Any],
@@ -162,13 +175,23 @@ def detect_changes(old: dict[str, Any] | None, new_cands: dict[str, Any],
     def nm(k):
         return names.get(int(k), f"NORAD {k}")
 
+    cand_msgs: list[str] = []
     for k in sorted(set(new_cands) - set(old_c)):
-        msgs.append(f"{nm(k)} ({k}): отново/ново активен в обхвата")
+        cand_msgs.append(f"{nm(k)} ({k}): отново/ново активен в обхвата")
     for k in sorted(set(old_c) - set(new_cands)):
-        msgs.append(f"{nm(k)} ({k}): вече няма активен предавател в обхвата")
+        cand_msgs.append(f"{nm(k)} ({k}): вече няма активен предавател в обхвата")
     for k in sorted(set(old_c) & set(new_cands)):
         if old_c[k] != new_cands[k]:
-            msgs.append(f"{nm(k)} ({k}): променени честоти/режими: {old_c[k]} -> {new_cands[k]}")
+            cand_msgs.append(f"{nm(k)} ({k}): променени честоти/режими: {old_c[k]} -> {new_cands[k]}")
+    if len(cand_msgs) > MAX_CHANGE_LINES:
+        # напр. при включване на нов обхват — обобщение вместо стотици редове
+        added = len(set(new_cands) - set(old_c))
+        removed = len(set(old_c) - set(new_cands))
+        changed = len(cand_msgs) - added - removed
+        msgs.append(f"Кандидати: +{added} нови, −{removed} отпаднали, {changed} с променени честоти "
+                    f"(общо {len(new_cands)})")
+    else:
+        msgs += cand_msgs
 
     old_sel = {s["norad_id"]: s for s in old.get("selection", [])}
     new_by = {e.norad_id: e for e in new_sel}
@@ -187,7 +210,7 @@ def update_selection(cfg, transmitters, activity, tle_text) -> tuple[list[SatEnt
     """Съставя списъка, записва го и връща промените спрямо предишния."""
     names = tle_names(tle_text)
     sel = build_selection(cfg, transmitters, activity, tle_text)
-    cands = _candidate_summary(cfg, transmitters)
+    cands = _candidate_summary(cfg, transmitters, names)
     path = selection_path(cfg)
     old = read_json(path)
     changes = detect_changes(old, cands, sel, names)

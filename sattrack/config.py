@@ -66,7 +66,7 @@ DEFAULTS: dict[str, Any] = {
         "amsat_aliases": {},
     },
     "selection": {
-        "auto_count": 7,                # FR-05: първите 6-7 сателита
+        "auto_count": 7,                # FR-05: първите 6-7 сателита (за всеки обхват)
     },
     "satellites": {
         # FR-02 / FR-05: ръчните настройки имат предимство пред автоматичния списък.
@@ -153,8 +153,25 @@ class Config:
         return self.path(self.raw["log"]["dir"])
 
     def in_band(self, freq_hz: float) -> bool:
+        return self.band_index(freq_hz) is not None
+
+    def band_index(self, freq_hz: float) -> int | None:
+        """Номерът на разрешения обхват, в който е честотата (None = извън)."""
         mhz = freq_hz / 1e6
-        return any(lo <= mhz <= hi for lo, hi in self.raw["band"]["downlink_ranges_mhz"])
+        for i, (lo, hi) in enumerate(self.raw["band"]["downlink_ranges_mhz"]):
+            if lo <= mhz <= hi:
+                return i
+        return None
+
+    def amateur_bands(self) -> tuple[str, ...]:
+        """'vhf' (2 m) и/или 'uhf' (70 cm) според разрешените обхвати."""
+        out = []
+        for lo, hi in self.raw["band"]["downlink_ranges_mhz"]:
+            if lo < 148 and hi > 144:
+                out.append("vhf")
+            if lo < 450 and hi > 420:
+                out.append("uhf")
+        return tuple(dict.fromkeys(out))
 
     def doppler_params(self, mode: str) -> dict[str, float]:
         return self.raw["doppler"][mode_family(mode)]

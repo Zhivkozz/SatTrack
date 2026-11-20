@@ -1,21 +1,8 @@
 {
   "schema_version": 1,
-  "updated": "2026-11-20T13:04:43+00:00",
-  "confirmed": true,
+  "updated": "2026-11-20T13:12:43+00:00",
+  "confirmed": false,
   "selection": [
-    {
-      "norad_id": 25544,
-      "name": "ISS",
-      "frequency_hz": 145800000,
-      "mode": "FM",
-      "filter": "normal",
-      "cw_pitch_hz": null,
-      "enabled": true,
-      "source": "manual",
-      "transmitter": "Mode V/V FM (crew R2+3) [FM]",
-      "transmitter_uuid": "PjfcFc4PZ8M8n3thuyA6x9",
-      "activity": 26
-    },
     {
       "norad_id": 7530,
       "name": "OSCAR 7 (AO-7)",
@@ -41,6 +28,19 @@
       "transmitter": "U/V CW Transponder [CW]",
       "transmitter_uuid": "gWivxT7RmBwKK8WbVy6ucF",
       "activity": 11
+    },
+    {
+      "norad_id": 25544,
+      "name": "ISS",
+      "frequency_hz": 145800000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "manual",
+      "transmitter": "Mode V/V FM (crew R2+3) [FM]",
+      "transmitter_uuid": "PjfcFc4PZ8M8n3thuyA6x9",
+      "activity": 4
     },
     {
       "norad_id": 59112,
@@ -69,6 +69,19 @@
       "activity": 3
     },
     {
+      "norad_id": 60237,
+      "name": "GRBBETA",
+      "frequency_hz": 145935000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "Mode V - GFSK9k6 - AX.25 [GFSK]",
+      "transmitter_uuid": "UyJWovKjRxbB7frxkJEBdu",
+      "activity": 2
+    },
+    {
       "norad_id": 26931,
       "name": "PCSAT (NO-44)",
       "frequency_hz": 144390000,
@@ -82,16 +95,94 @@
       "activity": 2
     },
     {
-      "norad_id": 67683,
-      "name": "KNACKSAT-2",
-      "frequency_hz": 145825000,
+      "norad_id": 61781,
+      "name": "ASRTU-1 (AO-123)",
+      "frequency_hz": 435400000,
       "mode": "FM",
       "filter": "normal",
       "cw_pitch_hz": null,
       "enabled": true,
       "source": "auto",
-      "transmitter": "Mode V/V - FSK9k6 - Digipeater - AX.25 G3RUH [FSK]",
-      "transmitter_uuid": "JR28wAEjmpuDQ4FrPWAiwf",
+      "transmitter": "Mode V/U - FM Transceiver [FM]",
+      "transmitter_uuid": "f7MZKobjSKakAWQsEoLmkq",
+      "activity": 21
+    },
+    {
+      "norad_id": 27607,
+      "name": "SAUDISAT 1C (SO-50)",
+      "frequency_hz": 436795000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "Mode V/U FM Voice CTCSS 67.0 Hz [FM]",
+      "transmitter_uuid": "Y9P45XRJH8yAsbDDe4qHnE",
+      "activity": 16
+    },
+    {
+      "norad_id": 62391,
+      "name": "LASARSAT",
+      "frequency_hz": 436925000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "Mode U - GFSK9k6 - AX.25 G3RUH [GFSK]",
+      "transmitter_uuid": "C3RnLSSuaKzWhHrtJCqUgu",
+      "activity": 5
+    },
+    {
+      "norad_id": 57172,
+      "name": "UMKA 1 (RS40S)",
+      "frequency_hz": 437625000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "Mode U - GMSK 9k6 (USP) TLM [GMSK USP]",
+      "transmitter_uuid": "eRAUq7Whot3A5nN3kNvwTr",
+      "activity": 3
+    },
+    {
+      "norad_id": 62394,
+      "name": "CROCUBE",
+      "frequency_hz": 436775000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "Mode U/U - GFSK9k6 - Digipeater - AX.25 [GFSK]",
+      "transmitter_uuid": "Uuo2RJjpxDmrpshXqrtXnK",
+      "activity": 2
+    },
+    {
+      "norad_id": 69935,
+      "name": "KOSTKA",
+      "frequency_hz": 436870000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "KOSTKA UHF AX.25 [GFSK]",
+      "transmitter_uuid": "nPPib2bitRKHSXBPwNMfbQ",
+      "activity": 1
+    },
+    {
+      "norad_id": 57189,
+      "name": "VIZARD-METEO (RS38S)",
+      "frequency_hz": 437825000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "Mode U - GMSK 2k4 (USP FEC) TLM [GMSK USP]",
+      "transmitter_uuid": "arw4iGWiTZDF8yQ64UBZgE",
       "activity": 1
     }
   ],
@@ -100,6 +191,11 @@
       {
         "uuid": "YCcdJmZyt62cx8R8fv8mTe",
         "downlink_hz": 145977500,
+        "mode": "CW"
+      },
+      {
+        "uuid": "epmfL93RZ2Vf5WKK4X2auf",
+        "downlink_hz": 435100000,
         "mode": "CW"
       },
       {
@@ -127,7 +223,82 @@
         "mode": "AFSK"
       }
     ],
+    "20442": [
+      {
+        "uuid": "Z2ViCYEPTmBkKPkMKFgnJg",
+        "downlink_hz": 437150000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "ZAKErADdWKpMiDjvKKhmmB",
+        "downlink_hz": 437125000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "iQRkZ4BeNeTphSGEwtBztm",
+        "downlink_hz": 435078000,
+        "mode": null
+      }
+    ],
+    "22825": [
+      {
+        "uuid": "L9JHEH4e8vagsDdJot8P3e",
+        "downlink_hz": 436797000,
+        "mode": "GMSK"
+      },
+      {
+        "uuid": "fPpLQQAPMEHEcgK59hfaRA",
+        "downlink_hz": 436795000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "jYtki5mG7PidNmWJVU3D4E",
+        "downlink_hz": 436795000,
+        "mode": "FM"
+      }
+    ],
+    "22826": [
+      {
+        "uuid": "EqJ7V2tkuFDPF4YqKGRxvg",
+        "downlink_hz": 435772000,
+        "mode": "BPSK"
+      }
+    ],
+    "24278": [
+      {
+        "uuid": "J69tNga2yUACngU6T85Buk",
+        "downlink_hz": 435910000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "Zqa2ebzyRRBffvwkLnjTVc",
+        "downlink_hz": 435795000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "t2ffeMh8FNf979UMF7kGaV",
+        "downlink_hz": 435800000,
+        "mode": "USB"
+      }
+    ],
+    "25397": [
+      {
+        "uuid": "5W3dB4ix8qxUZ362SQvVwh",
+        "downlink_hz": 435225000,
+        "mode": "FSK"
+      },
+      {
+        "uuid": "Dr9jk4p5WxHjhJ7ETmXzbY",
+        "downlink_hz": 435325000,
+        "mode": "FSK"
+      }
+    ],
     "25544": [
+      {
+        "uuid": "8qgr8X9wKAwb9BwA6uZYqX",
+        "downlink_hz": 437800000,
+        "mode": "SSTV"
+      },
       {
         "uuid": "PjfcFc4PZ8M8n3thuyA6x9",
         "downlink_hz": 145800000,
@@ -137,6 +308,31 @@
         "uuid": "ZJxCeQmih9zDfYNVrB4wRN",
         "downlink_hz": 145825000,
         "mode": "AFSK"
+      },
+      {
+        "uuid": "bSPmbvvAavnj9XHMim8yEc",
+        "downlink_hz": 437550000,
+        "mode": "SSTV"
+      },
+      {
+        "uuid": "cjQ8LkcsshNpAvTEAGkU3X",
+        "downlink_hz": 437825000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "dPuSJJPpqqMuFTGNBLw77u",
+        "downlink_hz": 437800000,
+        "mode": "FSK"
+      },
+      {
+        "uuid": "eozSf5mKyzNxoascs8V4bV",
+        "downlink_hz": 437800000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "kGUAAw2FAT8MJ7cxCEUZJ5",
+        "downlink_hz": 435400000,
+        "mode": "FM"
       },
       {
         "uuid": "pQRPwTWqQr7unDav5Mz4pG",
@@ -166,76 +362,262 @@
         "mode": "AFSK"
       }
     ],
-    "28650": [
+    "27607": [
       {
-        "uuid": "2FLxMzHDWYXqgmKF7XX9Me",
-        "downlink_hz": 145860000,
-        "mode": "CW"
-      }
-    ],
-    "36799": [
-      {
-        "uuid": "FcDnv8HWpjWRSgdHofHhEd",
-        "downlink_hz": 145980000,
+        "uuid": "Y9P45XRJH8yAsbDDe4qHnE",
+        "downlink_hz": 436795000,
         "mode": "FM"
       }
     ],
-    "39427": [
+    "27844": [
       {
-        "uuid": "88v7p7asctEGk47ZrqF7yN",
-        "downlink_hz": 145815000,
+        "uuid": "fpLBtCB3kRcf5uFWvSonsC",
+        "downlink_hz": 437470000,
         "mode": "AFSK"
       },
       {
-        "uuid": "Ne9UPFJErgJFcEzqADZJWL",
-        "downlink_hz": 145815000,
+        "uuid": "mqQF9JxmD4KB6MqTVXqQBQ",
+        "downlink_hz": 436835820,
         "mode": "CW"
       },
       {
-        "uuid": "R5YQu55yNKd48di5HbPfe5",
-        "downlink_hz": 145860000,
+        "uuid": "ufVXbFsznnzKWsXqyf8gwE",
+        "downlink_hz": 436837500,
         "mode": "CW"
-      },
+      }
+    ],
+    "27848": [
       {
-        "uuid": "TMxTiKcBFxGmTcWv2qYfUC",
-        "downlink_hz": 145818000,
-        "mode": "CW"
-      },
-      {
-        "uuid": "mC6MpttrDi3hxmhzisPoeQ",
-        "downlink_hz": 145860000,
+        "uuid": "2uGo77ULzByLLyshanpctH",
+        "downlink_hz": 437490000,
         "mode": "AFSK"
-      }
-    ],
-    "39428": [
-      {
-        "uuid": "aRboijNaKGSDZu3ZVyTFX2",
-        "downlink_hz": 145870000,
-        "mode": "BPSK"
       },
       {
-        "uuid": "xhcgD5AANWnK8r2jq6QVA7",
-        "downlink_hz": 145930000,
-        "mode": "BPSK"
-      }
-    ],
-    "39432": [
-      {
-        "uuid": "a5kpE63CcUXcGwLN4fY26k",
-        "downlink_hz": 145947000,
-        "mode": "BPSK"
+        "uuid": "aBHGFxMopeCscUYRyiYdXC",
+        "downlink_hz": 436848700,
+        "mode": "CW"
       },
       {
-        "uuid": "gHNdPTyE4v4yEkGBJzRFWV",
-        "downlink_hz": 145947000,
+        "uuid": "gmmMUrZydhneJJZRJAYoG7",
+        "downlink_hz": 436847500,
+        "mode": "CW"
+      }
+    ],
+    "27939": [
+      {
+        "uuid": "4p9hbcmaFJnSCZvCrZ3oCL",
+        "downlink_hz": 435352000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "FyC3BE75BxrFU25Lk5XLCN",
+        "downlink_hz": 435352800,
+        "mode": "CW"
+      },
+      {
+        "uuid": "eXpwEmjNcom9kzRsYNGcyF",
+        "downlink_hz": 435353000,
+        "mode": "DOKA"
+      }
+    ],
+    "28895": [
+      {
+        "uuid": "ShK6dsshtuNqssrY4xP7LA",
+        "downlink_hz": 437463100,
+        "mode": "CW"
+      }
+    ],
+    "32785": [
+      {
+        "uuid": "ie2oBdY3zydrkWxEHvXtL7",
+        "downlink_hz": 437475000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "w3YLCLgdTqDpqhZ24uaJzM",
+        "downlink_hz": 437275000,
+        "mode": "CW"
+      }
+    ],
+    "32791": [
+      {
+        "uuid": "83vZm8YxPFoXjEzH9yhy4V",
+        "downlink_hz": 437485000,
+        "mode": "FMN"
+      },
+      {
+        "uuid": "N7SGiqMhkHpjfjeGh42wvX",
+        "downlink_hz": 437485700,
+        "mode": "CW"
+      },
+      {
+        "uuid": "WzUhZvVherckTDUttWu3dW",
+        "downlink_hz": 437485000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "fqnBqnTm3fxX4rbpF55tPS",
+        "downlink_hz": 437485000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "nJWyfQ4aLw7GVKboLhni6j",
+        "downlink_hz": 437485000,
+        "mode": "SSTV"
+      }
+    ],
+    "32953": [
+      {
+        "uuid": "4vRcttnce4Z3nhfsQQt8kM",
+        "downlink_hz": 435315700,
+        "mode": "CW"
+      },
+      {
+        "uuid": "TaNwRs2MhWH3s99LDrRt3m",
+        "downlink_hz": 435353000,
         "mode": "FM"
+      },
+      {
+        "uuid": "gFtFgRMUqbmLbR94Jjb2KK",
+        "downlink_hz": 435315000,
+        "mode": "DOKA"
+      },
+      {
+        "uuid": "h7S7VNjodegJM2AYahtvAN",
+        "downlink_hz": 435215000,
+        "mode": "PSK"
       }
     ],
-    "39438": [
+    "33499": [
       {
-        "uuid": "qi4FX8EQ2UsiwwEyhbuYT7",
-        "downlink_hz": 145980000,
+        "uuid": "MquDcKUEW6mR3VP3M2vAdQ",
+        "downlink_hz": 437385000,
         "mode": "CW"
+      },
+      {
+        "uuid": "ZkQJidFbx97FBARSxybeyh",
+        "downlink_hz": 437445000,
+        "mode": "AFSK"
+      }
+    ],
+    "35932": [
+      {
+        "uuid": "HtEGx3wfyNjXDxoFEvBTrc",
+        "downlink_hz": 437505000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "qkFttEau6SfHo2jM3kcftm",
+        "downlink_hz": 437500700,
+        "mode": "CW"
+      },
+      {
+        "uuid": "umF8WmqmSSiMVnfbPUwNh4",
+        "downlink_hz": 437505000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "yA9kEtgExZb7QvBrpWxu77",
+        "downlink_hz": 437500000,
+        "mode": "BPSK"
+      }
+    ],
+    "35933": [
+      {
+        "uuid": "ZwdQUwqRbFETGnLAxoH9JF",
+        "downlink_hz": 435950000,
+        "mode": "GMSK"
+      },
+      {
+        "uuid": "dKekeLctU9VrDaYg7QRQ9J",
+        "downlink_hz": 435950000,
+        "mode": "GMSK"
+      }
+    ],
+    "35935": [
+      {
+        "uuid": "WjSuDmnkX32dASG7NqajhU",
+        "downlink_hz": 437325000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "dJh7FWnBCfAg4ny2qqxabN",
+        "downlink_hz": 437322500,
+        "mode": "GFSK"
+      },
+      {
+        "uuid": "r6mypHqFn5e2M2gadzsPx3",
+        "downlink_hz": 437325000,
+        "mode": "GFSK"
+      }
+    ],
+    "36122": [
+      {
+        "uuid": "AEzrojCTbvAeZRDtPmqitc",
+        "downlink_hz": 435675000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "T7QXLn5PryWVdjqDUfGa55",
+        "downlink_hz": 435791000,
+        "mode": "CW"
+      }
+    ],
+    "37224": [
+      {
+        "uuid": "uFLHu8MEJU5LJqjkVSHs2G",
+        "downlink_hz": 437305000,
+        "mode": "AFSK"
+      }
+    ],
+    "37839": [
+      {
+        "uuid": "KXTiVXsz8GnSZrfQU4yTnM",
+        "downlink_hz": 437505000,
+        "mode": "FSK"
+      },
+      {
+        "uuid": "NMbzCvfQ2cfTf4XUbDKe5A",
+        "downlink_hz": 437275000,
+        "mode": "CW"
+      }
+    ],
+    "37841": [
+      {
+        "uuid": "XvPtteeoMRay7B3n3akDJE",
+        "downlink_hz": 437425000,
+        "mode": "CW"
+      }
+    ],
+    "39417": [
+      {
+        "uuid": "SceFq4oXTQbAsaugQsnwuG",
+        "downlink_hz": 437356000,
+        "mode": "FSK"
+      },
+      {
+        "uuid": "feUjHrNeVPFjigkjaisKsg",
+        "downlink_hz": 437356000,
+        "mode": "FSK"
+      }
+    ],
+    "39430": [
+      {
+        "uuid": "xAU7UCMqYdVNPDtbej2aeJ",
+        "downlink_hz": 437250000,
+        "mode": "GMSK"
+      }
+    ],
+    "39440": [
+      {
+        "uuid": "2KinLbk46zccaYCdUY4Lqr",
+        "downlink_hz": 437445000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "WvVrtfb4nKtEr3sJGqZdT7",
+        "downlink_hz": 437445000,
+        "mode": "FSK"
       }
     ],
     "39444": [
@@ -255,11 +637,28 @@
         "mode": "USB"
       }
     ],
-    "40024": [
+    "39446": [
       {
-        "uuid": "s8jpdkUffam9RxRArizMQd",
-        "downlink_hz": 145865000,
-        "mode": "BPSK"
+        "uuid": "D7iEeEbjNj49tusqHgpL4g",
+        "downlink_hz": 437385000,
+        "mode": "FSK"
+      },
+      {
+        "uuid": "MeaPQ3CNsoHtXVZADFMvbc",
+        "downlink_hz": 436395000,
+        "mode": "FSK"
+      },
+      {
+        "uuid": "gBpooS3AUqyvkhCpRQvvW5",
+        "downlink_hz": 437384000,
+        "mode": "FSK"
+      }
+    ],
+    "40012": [
+      {
+        "uuid": "TfCk7i5Hmy2PEFd2kXvFjh",
+        "downlink_hz": 437421500,
+        "mode": "FSK"
       }
     ],
     "40025": [
@@ -284,106 +683,32 @@
         "mode": "USB"
       }
     ],
-    "40032": [
-      {
-        "uuid": "6DQp67crsBzih2LWRGFNFM",
-        "downlink_hz": 145878740,
-        "mode": "BPSK"
-      },
-      {
-        "uuid": "QE9FpDcXwx383HzouMDGCL",
-        "downlink_hz": 145880000,
-        "mode": "CW"
-      }
-    ],
-    "40055": [
-      {
-        "uuid": "sjVybmqJVwcqCuGnKV727T",
-        "downlink_hz": 145890000,
-        "mode": "BPSK"
-      }
-    ],
-    "40056": [
-      {
-        "uuid": "g6GLEgvyLTaEwshbd2CbJK",
-        "downlink_hz": 145890000,
-        "mode": "BPSK"
-      }
-    ],
-    "40057": [
-      {
-        "uuid": "nP9SjSXhoLLLi4Xso84aER",
-        "downlink_hz": 145980000,
-        "mode": "CW"
-      }
-    ],
-    "40074": [
-      {
-        "uuid": "7AchptE4yLHTtdLHSZQR4o",
-        "downlink_hz": 145840000,
-        "mode": "CW"
-      },
-      {
-        "uuid": "7FGfFQtV3iYR8anFpbZKz3",
-        "downlink_hz": 145844200,
-        "mode": "CW"
-      },
-      {
-        "uuid": "9UHihpacwFrRmgZNAweK2g",
-        "downlink_hz": 145915000,
-        "mode": "BPSK"
-      },
-      {
-        "uuid": "HWdDcVRpjQJCxMbtRkL5em",
-        "downlink_hz": 145840000,
-        "mode": "BPSK"
-      },
-      {
-        "uuid": "NgyrK6zK9cb9cZVSSfE9m3",
-        "downlink_hz": 145930000,
-        "mode": "USB"
-      },
-      {
-        "uuid": "VkmkGr2WyemjUFRGmyA6yP",
-        "downlink_hz": 145843800,
-        "mode": "CW"
-      }
-    ],
-    "40719": [
-      {
-        "uuid": "nHWtq7t2BfC8pNYYpi4ZwS",
-        "downlink_hz": 145973700,
-        "mode": "BPSK"
-      },
-      {
-        "uuid": "yzLZeFypEj65qUKis3XrTd",
-        "downlink_hz": 145975000,
-        "mode": "BPSK"
-      }
-    ],
     "40908": [
+      {
+        "uuid": "Hw5GbFVZWCZyxKmvHwq8Gc",
+        "downlink_hz": 437200000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "cpsxRoz8S2dndbyCX8BEDX",
+        "downlink_hz": 437200000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "jjNQUqaaSuehNx5qVGzQwY",
+        "downlink_hz": 437225000,
+        "mode": "GFSK"
+      },
       {
         "uuid": "xHDr7c3A7TuTPFcVvHKQuN",
         "downlink_hz": 144390000,
         "mode": "AFSK"
       }
     ],
-    "40931": [
+    "41847": [
       {
-        "uuid": "UFjhPnjt4obbuMMK4icvwQ",
-        "downlink_hz": 145825000,
-        "mode": "CW"
-      },
-      {
-        "uuid": "x4TAmrVLwZo3hx946fHi44",
-        "downlink_hz": 145825000,
-        "mode": "AFSK"
-      }
-    ],
-    "41783": [
-      {
-        "uuid": "FbMz82s4DtgiUxGVXhn7YY",
-        "downlink_hz": 145980000,
+        "uuid": "M5SqudRyz3bQgGGjt5xoWm",
+        "downlink_hz": 435710000,
         "mode": "CW"
       }
     ],
@@ -430,23 +755,6 @@
         "mode": "BPSK"
       }
     ],
-    "43792": [
-      {
-        "uuid": "aj32dry5ZZkoA84yLYz8y8",
-        "downlink_hz": 145895000,
-        "mode": "FM"
-      },
-      {
-        "uuid": "xTVXwsEVTjzmE7zGKTmGhg",
-        "downlink_hz": 145895000,
-        "mode": "BPSK"
-      },
-      {
-        "uuid": "y5GTUBzux5RccNkkSvcsfJ",
-        "downlink_hz": 145895000,
-        "mode": "BPSK"
-      }
-    ],
     "43803": [
       {
         "uuid": "Epf9JK4hvNEAYuW49JiHtB",
@@ -462,6 +770,13 @@
         "uuid": "ocoEf6MEZtiZgvEWSWsqtY",
         "downlink_hz": 145840000,
         "mode": "BPSK"
+      }
+    ],
+    "43880": [
+      {
+        "uuid": "84i7RcGzy3QTCzM9GaRYmP",
+        "downlink_hz": 435600000,
+        "mode": "FSK"
       }
     ],
     "44881": [
@@ -481,67 +796,247 @@
         "mode": "CW"
       }
     ],
-    "44885": [
+    "44909": [
       {
-        "uuid": "37STiZxCY6Yft8sZ68LWfE",
-        "downlink_hz": 145900000,
-        "mode": "GFSK"
-      }
-    ],
-    "48274": [
-      {
-        "uuid": "63EenHAYSzVfqrqshAroCP",
-        "downlink_hz": 145985000,
-        "mode": "SSTV"
+        "uuid": "6khJGrSmppmokPfTMaq6Ms",
+        "downlink_hz": 435315000,
+        "mode": "FSK"
       },
       {
-        "uuid": "A9LvMKMFVu7JMsaiVaDeoU",
-        "downlink_hz": 145985000,
-        "mode": "FMN"
-      },
-      {
-        "uuid": "TaCsx7ApXaJoZkZGcL6zJF",
-        "downlink_hz": 145985000,
-        "mode": "FMN"
-      },
-      {
-        "uuid": "jef9qEB6JhKDSPneswKWev",
-        "downlink_hz": 145825000,
-        "mode": "AFSK"
-      }
-    ],
-    "99914": [
-      {
-        "uuid": "HYS9gMdmAfCbSGoqtusTtG",
-        "downlink_hz": 145900000,
-        "mode": "FM"
-      },
-      {
-        "uuid": "iDUm3a8ocV68ZwFjcQ4bmB",
-        "downlink_hz": 145900000,
-        "mode": "AFSK"
-      }
-    ],
-    "49399": [
-      {
-        "uuid": "PSXKMkfdBXmue7GbeYYHrS",
-        "downlink_hz": 145875000,
-        "mode": "FSK AX.25 G3RUH"
-      }
-    ],
-    "99054": [
-      {
-        "uuid": "WhPVG3gSJNgCSTeJRYfM7K",
-        "downlink_hz": 145962500,
+        "uuid": "89NTmbqJEuTGW36fd386Fy",
+        "downlink_hz": 435610000,
         "mode": "USB"
       },
       {
-        "uuid": "kZaHmrqXqkJTyawyQexGFQ",
-        "downlink_hz": 144015000,
+        "uuid": "YAiZ4rWyaGKZq93BXHYUEw",
+        "downlink_hz": 435605000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "ZiJbdMEwj92mqojjtjTN87",
+        "downlink_hz": 435660000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "cZZmCb4cySQGjea5kgotQG",
+        "downlink_hz": 435215000,
+        "mode": "DOKA"
+      }
+    ],
+    "46495": [
+      {
+        "uuid": "2y8DRYd4fMKKHYrP67s6Fb",
+        "downlink_hz": 435950000,
+        "mode": "AFSK TUBiX10"
+      }
+    ],
+    "60209": [
+      {
+        "uuid": "VALRwCUoXLTaomR5FWXJmy",
+        "downlink_hz": 435800000,
+        "mode": "BPSK"
+      }
+    ],
+    "50466": [
+      {
+        "uuid": "JB4Bsj4MUAgjgNojDLB8qe",
+        "downlink_hz": 435180000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "SqMaeqweB8LkyaBcExhxQT",
+        "downlink_hz": 435725000,
+        "mode": "GMSK"
+      },
+      {
+        "uuid": "d2wKU3qETr3tLdxCGVJ8cb",
+        "downlink_hz": 435575000,
+        "mode": "CW"
+      }
+    ],
+    "57187": [
+      {
+        "uuid": "Lq2hHBgJBtT9iGfgyuhLxR",
+        "downlink_hz": 437875000,
+        "mode": "GMSK USP"
+      },
+      {
+        "uuid": "m4swKSjArERT8oJjXagQ6f",
+        "downlink_hz": 437875000,
         "mode": "GMSK"
       }
     ],
+    "57178": [
+      {
+        "uuid": "K6pMj8h9wdzEE9cm3WXauo",
+        "downlink_hz": 436570000,
+        "mode": "GMSK USP"
+      }
+    ],
+    "57189": [
+      {
+        "uuid": "arw4iGWiTZDF8yQ64UBZgE",
+        "downlink_hz": 437825000,
+        "mode": "GMSK USP"
+      },
+      {
+        "uuid": "kreKfmt4vs4n22TyJZ4Mft",
+        "downlink_hz": 437825000,
+        "mode": "SSTV"
+      }
+    ],
+    "57184": [
+      {
+        "uuid": "HrSQKgXUX3mVgrNm556ZDo",
+        "downlink_hz": 435000000,
+        "mode": "DOKA"
+      },
+      {
+        "uuid": "bRxabeZcfeTY2uaHV6BEWj",
+        "downlink_hz": 435860000,
+        "mode": "FSK"
+      },
+      {
+        "uuid": "gNHwpnG3kFxMiSjCU5LNeA",
+        "downlink_hz": 435915000,
+        "mode": "DOKA"
+      },
+      {
+        "uuid": "jyEKBpFSxtF2WwiHzvATSL",
+        "downlink_hz": 435650000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "o6jjcgr6pzJ2JXqvy2v6oV",
+        "downlink_hz": 435815000,
+        "mode": "AFSK"
+      }
+    ],
+    "57180": [
+      {
+        "uuid": "AUF5QGKakLf5FGfK5aCZfZ",
+        "downlink_hz": 435290000,
+        "mode": "SSTV"
+      },
+      {
+        "uuid": "HuHvK3tHMNjXjvbVFPUrgy",
+        "downlink_hz": 435290000,
+        "mode": "GMSK USP"
+      },
+      {
+        "uuid": "kLmPFgWvax5NLZCncZj7Y6",
+        "downlink_hz": 435290000,
+        "mode": "GMSK USP"
+      }
+    ],
+    "57182": [
+      {
+        "uuid": "K94RHxvJswM5dWQv5fjcw5",
+        "downlink_hz": 436080000,
+        "mode": "SSTV"
+      },
+      {
+        "uuid": "PRJ9oz5oKUAVgCrPPB9u3j",
+        "downlink_hz": 436080000,
+        "mode": "GMSK USP"
+      },
+      {
+        "uuid": "YQc7qtBwv6aaNBM92M6knx",
+        "downlink_hz": 436080000,
+        "mode": "GMSK USP"
+      },
+      {
+        "uuid": "j8xJNZKD7xHJ7uS4hNewQS",
+        "downlink_hz": 436080000,
+        "mode": "GMSK USP"
+      }
+    ],
+    "57172": [
+      {
+        "uuid": "AjYqcyjoAjJrmfsYtH7oux",
+        "downlink_hz": 437625000,
+        "mode": "SSTV"
+      },
+      {
+        "uuid": "ZjS93aNT7JJrqcN6CCRyoP",
+        "downlink_hz": 437625000,
+        "mode": "GMSK USP"
+      },
+      {
+        "uuid": "eRAUq7Whot3A5nN3kNvwTr",
+        "downlink_hz": 437625000,
+        "mode": "GMSK USP"
+      },
+      {
+        "uuid": "jGntWXMNbeVhZfuHGKXUAj",
+        "downlink_hz": 437625000,
+        "mode": "CW"
+      }
+    ],
+    "57217": [
+      {
+        "uuid": "TppBmrNUoudprjLLktfcC2",
+        "downlink_hz": 437100000,
+        "mode": "GMSK USP"
+      }
+    ],
+    "57203": [
+      {
+        "uuid": "97wGYq6hnNfiey4DX8QswX",
+        "downlink_hz": 435680000,
+        "mode": "GMSK USP"
+      },
+      {
+        "uuid": "JnBA9dq5WnWQugErAnPDcz",
+        "downlink_hz": 436125000,
+        "mode": "SSTV"
+      },
+      {
+        "uuid": "caUuRUfPwWZD4HJQAVPSqB",
+        "downlink_hz": 436125000,
+        "mode": "GMSK USP"
+      },
+      {
+        "uuid": "oSkpmfHTdPWbvQnHn9eNCM",
+        "downlink_hz": 436125000,
+        "mode": "GMSK USP"
+      }
+    ],
+    "57191": [
+      {
+        "uuid": "djnGJ6Ef87pQrBuq3vbeLB",
+        "downlink_hz": 436550000,
+        "mode": "LoRa"
+      },
+      {
+        "uuid": "nJqp5crQ72pxa96Cx8Ls7X",
+        "downlink_hz": 436550000,
+        "mode": "FSK"
+      }
+    ],
+    "61781": [
+      {
+        "uuid": "8d93PPUBXTaMgcyM6mbuFa",
+        "downlink_hz": 435400000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "GoQruJ8i7g5kSoHpvkxAGh",
+        "downlink_hz": 436210000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "f7MZKobjSKakAWQsEoLmkq",
+        "downlink_hz": 435400000,
+        "mode": "FM"
+      }
+    ],
     "59112": [
+      {
+        "uuid": "Fo5WYJpLBKNyNQyqiuNXnw",
+        "downlink_hz": 437025000,
+        "mode": "GMSK"
+      },
       {
         "uuid": "HaaJeCRRdYWsknWChvL8tZ",
         "downlink_hz": 145825000,
@@ -558,18 +1053,38 @@
         "mode": "SSTV"
       }
     ],
-    "59065": [
+    "61785": [
       {
-        "uuid": "34wa7RmYJLhjfwom3sBRBr",
-        "downlink_hz": 145000000,
-        "mode": "FM"
+        "uuid": "4zLpSzVhsvxxRZmtVXKUf7",
+        "downlink_hz": 436200000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "N9yDVcJSmJ4r3Em6M3dfTa",
+        "downlink_hz": 436200000,
+        "mode": "GFSK"
       }
     ],
     "60237": [
       {
+        "uuid": "BbUpxL9PvWSfgGnmkBPmAq",
+        "downlink_hz": 436785000,
+        "mode": "GFSK"
+      },
+      {
         "uuid": "UyJWovKjRxbB7frxkJEBdu",
         "downlink_hz": 145935000,
         "mode": "GFSK"
+      },
+      {
+        "uuid": "Vyh4sA2BYQSUm6Lo2yigpV",
+        "downlink_hz": 436785000,
+        "mode": "GFSK"
+      },
+      {
+        "uuid": "gHvA9rpALpnmTFXr2TNzFR",
+        "downlink_hz": 436785000,
+        "mode": "CW"
       },
       {
         "uuid": "hpiPBMQVdd4K6ssBPe5M85",
@@ -577,75 +1092,271 @@
         "mode": "GFSK"
       }
     ],
-    "60239": [
+    "60240": [
       {
-        "uuid": "7bUNwqQg2rgUi43L8wSuek",
-        "downlink_hz": 144550000,
-        "mode": "SSTV"
-      },
-      {
-        "uuid": "W38ScamJJy9py8Kdrpo4Wq",
-        "downlink_hz": 144175000,
-        "mode": "FT8"
+        "uuid": "9WGrdoYnrpR5GebU7vZGNB",
+        "downlink_hz": 435950000,
+        "mode": "AFSK"
       }
     ],
-    "60238": [
+    "62394": [
       {
-        "uuid": "XHnnqeuv8pDg9fxhHgGzYn",
-        "downlink_hz": 145895000,
+        "uuid": "T8cvyUr2XXWCZzozDhtmdV",
+        "downlink_hz": 436775000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "Uuo2RJjpxDmrpshXqrtXnK",
+        "downlink_hz": 436775000,
+        "mode": "GFSK"
+      },
+      {
+        "uuid": "igqU9YdqUMDPj7Sq7EUq7S",
+        "downlink_hz": 436775000,
+        "mode": "GFSK"
+      }
+    ],
+    "62391": [
+      {
+        "uuid": "C3RnLSSuaKzWhHrtJCqUgu",
+        "downlink_hz": 436925000,
+        "mode": "GFSK"
+      },
+      {
+        "uuid": "YSppMTUQhnQoJKcuy9BATK",
+        "downlink_hz": 436925000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "n7SVNb7aLcE5J4GXcWNvcD",
+        "downlink_hz": 436925000,
+        "mode": "GFSK"
+      }
+    ],
+    "61779": [
+      {
+        "uuid": "7GtTVa6ceznWvPtQ6i5Lic",
+        "downlink_hz": 435615000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "Bv36U7yktTwkwnTxdDWWsH",
+        "downlink_hz": 435215000,
         "mode": "AFSK"
       },
       {
-        "uuid": "fTp2tUDzeGEBW92867CdZD",
-        "downlink_hz": 145895000,
-        "mode": "CW"
-      }
-    ],
-    "98796": [
-      {
-        "uuid": "8A9PKXNS2FwbTmPR7TLEUF",
-        "downlink_hz": 145895000,
+        "uuid": "SebBfd3FgcHKyauZMezp4i",
+        "downlink_hz": 435715000,
         "mode": "BPSK"
       }
     ],
-    "98771": [
+    "61746": [
       {
-        "uuid": "8RhiWYvKPCjZ2xNV7fcF8q",
-        "downlink_hz": 144225000,
+        "uuid": "SU77c3WngXuMRvjMdXeNiv",
+        "downlink_hz": 436835000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "nCK2oKK7cT2HE7zTPBjCXL",
+        "downlink_hz": 436835000,
+        "mode": "GFSK"
+      }
+    ],
+    "61784": [
+      {
+        "uuid": "DELFiUrNXdbSo7cbyPXomZ",
+        "downlink_hz": 437400000,
+        "mode": "FSK"
+      }
+    ],
+    "61753": [
+      {
+        "uuid": "Pfa3MC9SGCnUEfs9MYiyfk",
+        "downlink_hz": 435200000,
+        "mode": "FSK"
+      },
+      {
+        "uuid": "YAdwNDAYpZbqbT5KGUGJSk",
+        "downlink_hz": 435650000,
+        "mode": "FSK"
+      }
+    ],
+    "61754": [
+      {
+        "uuid": "dJwHobY762iwLGe8Ksc6oA",
+        "downlink_hz": 435700000,
+        "mode": "FSK"
+      }
+    ],
+    "63217": [
+      {
+        "uuid": "JY2RRqg3V8VEpRAzu56o4f",
+        "downlink_hz": 436400000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "Lhk6nKXKQZJCi9fibHUFuv",
+        "downlink_hz": 436400000,
+        "mode": "BPSK"
+      }
+    ],
+    "63219": [
+      {
+        "uuid": "VBk9etZ9E5qYdFoWdeBSZV",
+        "downlink_hz": 436400000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "hYxh2CZYWRQFotQaSEvGn2",
+        "downlink_hz": 436400000,
         "mode": "FM"
       }
     ],
-    "98707": [
+    "63218": [
       {
-        "uuid": "SbiRPsRmY7svdH9ZEEXjNU",
-        "downlink_hz": 145825000,
-        "mode": "AFSK"
-      }
-    ],
-    "98600": [
-      {
-        "uuid": "8mKJkGXE6EJDSQ84y786Am",
-        "downlink_hz": 145925000,
-        "mode": "GMSK"
+        "uuid": "kFg4jSVKdHcjPAe5Hr9PoK",
+        "downlink_hz": 436400000,
+        "mode": "BPSK"
       },
       {
-        "uuid": "JLo4L8x2AjaMMsZKQy5Bdp",
-        "downlink_hz": 145825000,
-        "mode": "AFSK"
+        "uuid": "mypJZHzePHtD98nyviQP6G",
+        "downlink_hz": 436400000,
+        "mode": "FM"
       }
     ],
-    "64535": [
+    "63213": [
       {
-        "uuid": "LbGdFspGFYakW69oAKrLGh",
-        "downlink_hz": 145900000,
-        "mode": "FSK AX.100 Mode 5"
+        "uuid": "QfzXV8aDpPs9VLwSCzv9HB",
+        "downlink_hz": 436400000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "X8sxcDTNdQLN97fUYYsu4z",
+        "downlink_hz": 436400000,
+        "mode": "BPSK"
       }
     ],
-    "64549": [
+    "63214": [
       {
-        "uuid": "QVk9iYroPhB4VtdwcbpbRH",
-        "downlink_hz": 145900000,
-        "mode": "FSK AX.100 Mode 5"
+        "uuid": "7pFtLcWxboQo7HYhaPz3iS",
+        "downlink_hz": 436400000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "jxxJbUDpKNdghSabsdJesD",
+        "downlink_hz": 436400000,
+        "mode": "FM"
+      }
+    ],
+    "63215": [
+      {
+        "uuid": "NHiYJRzxEwY29eJYagsaTA",
+        "downlink_hz": 436400000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "TMUXfQGhdX9ZyKDmcs34v8",
+        "downlink_hz": 436400000,
+        "mode": "FM"
+      }
+    ],
+    "63238": [
+      {
+        "uuid": "4XU5eZUpxzH8p69CtoViLd",
+        "downlink_hz": 436400000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "kgBbV4Gzed6w7aqbuMsUjZ",
+        "downlink_hz": 436400000,
+        "mode": "BPSK"
+      }
+    ],
+    "63239": [
+      {
+        "uuid": "MFUGQXTGKn4oztgLyjHKGu",
+        "downlink_hz": 436400000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "Mr2UnnRcoFskiNKmd8ffHc",
+        "downlink_hz": 436400000,
+        "mode": "BPSK"
+      }
+    ],
+    "63237": [
+      {
+        "uuid": "JV7vFGbDuPgVpzATQAXdGt",
+        "downlink_hz": 436400000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "esrMYBxToGw96jQXaZg8Qf",
+        "downlink_hz": 436400000,
+        "mode": "BPSK"
+      }
+    ],
+    "64881": [
+      {
+        "uuid": "hBwj8ryoewn4XDny9bkN7a",
+        "downlink_hz": 436270000,
+        "mode": "GFSK"
+      }
+    ],
+    "64880": [
+      {
+        "uuid": "34KpBL6uMxZ3rPnLxrbh2S",
+        "downlink_hz": 435970000,
+        "mode": "GFSK"
+      }
+    ],
+    "64890": [
+      {
+        "uuid": "kDh7FGiGCRthz3d9aRvmzd",
+        "downlink_hz": 436160000,
+        "mode": "GFSK"
+      }
+    ],
+    "64893": [
+      {
+        "uuid": "UEs6jEhdfuMMKUTnt5Bzmc",
+        "downlink_hz": 435740000,
+        "mode": "GFSK"
+      }
+    ],
+    "64892": [
+      {
+        "uuid": "dornxtScfja7eJvXWkVDu5",
+        "downlink_hz": 435335000,
+        "mode": "GFSK"
+      }
+    ],
+    "64891": [
+      {
+        "uuid": "2PaEUBRtkAhf2baamE3yEw",
+        "downlink_hz": 436660000,
+        "mode": "GFSK"
+      }
+    ],
+    "64879": [
+      {
+        "uuid": "RZBcE9ZWuRSF9JsbtQRnfD",
+        "downlink_hz": 436940000,
+        "mode": "GFSK"
+      }
+    ],
+    "64894": [
+      {
+        "uuid": "Nh9Kp45cR9Q9EMgCYAhhsE",
+        "downlink_hz": 436436000,
+        "mode": "GFSK"
+      }
+    ],
+    "64878": [
+      {
+        "uuid": "Pq7XceN9ka3DwBYDumMiZ9",
+        "downlink_hz": 435830000,
+        "mode": "GFSK"
       }
     ],
     "67683": [
@@ -655,102 +1366,21 @@
         "mode": "FSK"
       }
     ],
-    "98324": [
+    "69935": [
       {
-        "uuid": "DuxSqV7q3YhaLBJKmg23Lk",
-        "downlink_hz": 145850000,
-        "mode": "AFSK"
-      },
-      {
-        "uuid": "Ltzc4CMTfaN4EjiNK85Tsb",
-        "downlink_hz": 145850000,
-        "mode": "GMSK"
-      },
-      {
-        "uuid": "Wqgqvw6HytmdcFGJV7FWkt",
-        "downlink_hz": 145850000,
-        "mode": "CW"
-      },
-      {
-        "uuid": "mL3Cb3qEuLTPHMTG5qbkJu",
-        "downlink_hz": 145850000,
-        "mode": "GMSK"
-      }
-    ],
-    "98272": [
-      {
-        "uuid": "3DpNASTddtcH9zHEmZpsFK",
-        "downlink_hz": 145875000,
-        "mode": "CW"
-      },
-      {
-        "uuid": "a8xkbabTFt847p5FLDZsSP",
-        "downlink_hz": 145875000,
-        "mode": "FSK AX.100 Mode 5"
-      }
-    ],
-    "98293": [
-      {
-        "uuid": "5ZAjuziycSLXAq2xKYRg9B",
-        "downlink_hz": 145925000,
+        "uuid": "DQ7Fk97phKUaue9dra9pHQ",
+        "downlink_hz": 436870000,
         "mode": "GFSK"
       },
       {
-        "uuid": "GqaKbFf2Cq6MZinRpdb5br",
-        "downlink_hz": 145925000,
+        "uuid": "Kzoz4XGHwNxuLTpGs45ezT",
+        "downlink_hz": 436870000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "nPPib2bitRKHSXBPwNMfbQ",
+        "downlink_hz": 436870000,
         "mode": "GFSK"
-      }
-    ],
-    "98266": [
-      {
-        "uuid": "Z3QiGhjEGUaXGzZbdV9fD3",
-        "downlink_hz": 145825000,
-        "mode": "AFSK"
-      }
-    ],
-    "69916": [
-      {
-        "uuid": "9srrjnRRsgYngn8AiSUy9P",
-        "downlink_hz": 145825000,
-        "mode": "AFSK"
-      }
-    ],
-    "98208": [
-      {
-        "uuid": "GGzesaSC3m6tTiTnDVuW25",
-        "downlink_hz": 145920000,
-        "mode": "FSK"
-      },
-      {
-        "uuid": "jfphewxSz9Bz8vqpaYHkVY",
-        "downlink_hz": 145920000,
-        "mode": "GMSK"
-      }
-    ],
-    "98209": [
-      {
-        "uuid": "BgZp7u3sEGTcHNe385puBG",
-        "downlink_hz": 145960000,
-        "mode": "GMSK"
-      },
-      {
-        "uuid": "jK8Brce3QVjXJ7msde3jqs",
-        "downlink_hz": 145960000,
-        "mode": "FSK"
-      }
-    ],
-    "98236": [
-      {
-        "uuid": "joP3pXJ8R48XCqzzXzYGd6",
-        "downlink_hz": 145825000,
-        "mode": "AFSK"
-      }
-    ],
-    "98185": [
-      {
-        "uuid": "7jpgTb4BtnKb7in5UV5oEZ",
-        "downlink_hz": 145825000,
-        "mode": "AFSK"
       }
     ]
   }

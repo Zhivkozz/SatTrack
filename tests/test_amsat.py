@@ -28,6 +28,15 @@ def test_match_by_tle_name():
     assert amsat.match(names, "TIANYAN 01") == []
 
 
+def test_match_with_70cm_enabled():
+    names = amsat.parse_names(PAGE)
+    both = ("vhf", "uhf")
+    assert amsat.match(names, "ISS (ZARYA)", both) == ["ISS_[FM]", "ISS_[UHF_Digi]"]
+    assert amsat.match(names, "RS-44", both) == ["RS-44_[V/u]"]
+    assert amsat.label_band("QO-100_[NB]") == "other"
+    assert amsat.match(["QO-100_[NB]"], "QO-100", both) == []
+
+
 def test_count_heard():
     since = datetime(2026, 11, 19, 12, tzinfo=timezone.utc)
     reports = [
