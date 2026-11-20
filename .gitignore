@@ -1,0 +1,18 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# Локални настройки (COM порт, координати) — шаблонът е config.example.json
+config.json
+
+# Големи или временни файлове (FR-55)
+recordings/
+cache/
+logs/
+*.tmp
+
+# Флаг за пауза (FR-35)
+data/PAUSE

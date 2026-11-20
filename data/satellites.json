@@ -1,0 +1,757 @@
+{
+  "schema_version": 1,
+  "updated": "2026-11-20T11:49:01+00:00",
+  "confirmed": true,
+  "selection": [
+    {
+      "norad_id": 25544,
+      "name": "ISS",
+      "frequency_hz": 145800000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "manual",
+      "transmitter": "Mode V/V FM (crew R2+3) [FM]",
+      "transmitter_uuid": "PjfcFc4PZ8M8n3thuyA6x9",
+      "activity": 27
+    },
+    {
+      "norad_id": 7530,
+      "name": "OSCAR 7 (AO-7)",
+      "frequency_hz": 145977500,
+      "mode": "CW",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "Mode U/V (B) TLM Beacon [CW]",
+      "transmitter_uuid": "YCcdJmZyt62cx8R8fv8mTe",
+      "activity": 13
+    },
+    {
+      "norad_id": 43803,
+      "name": "JY1SAT (JO-97)",
+      "frequency_hz": 145865000,
+      "mode": "CW",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "U/V CW Transponder [CW]",
+      "transmitter_uuid": "gWivxT7RmBwKK8WbVy6ucF",
+      "activity": 11
+    },
+    {
+      "norad_id": 59112,
+      "name": "SONATE-2",
+      "frequency_hz": 145825000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "Mode V/V - APRS digipeater [AFSK]",
+      "transmitter_uuid": "HaaJeCRRdYWsknWChvL8tZ",
+      "activity": 4
+    },
+    {
+      "norad_id": 39444,
+      "name": "FUNCUBE-1 (AO-73)",
+      "frequency_hz": 145815000,
+      "mode": "CW",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "CW Beacon [CW]",
+      "transmitter_uuid": "QsYRjdzExRFdZyJvcEw2GC",
+      "activity": 3
+    },
+    {
+      "norad_id": 26931,
+      "name": "PCSAT (NO-44)",
+      "frequency_hz": 144390000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "Mode V - R2 Backup APRS 1K2 [AFSK]",
+      "transmitter_uuid": "UqNxMAshcYbg4EG6uPEkDt",
+      "activity": 3
+    },
+    {
+      "norad_id": 67683,
+      "name": "KNACKSAT-2",
+      "frequency_hz": 145825000,
+      "mode": "FM",
+      "filter": "normal",
+      "cw_pitch_hz": null,
+      "enabled": true,
+      "source": "auto",
+      "transmitter": "Mode V/V - FSK9k6 - Digipeater - AX.25 G3RUH [FSK]",
+      "transmitter_uuid": "JR28wAEjmpuDQ4FrPWAiwf",
+      "activity": 1
+    }
+  ],
+  "candidates": {
+    "7530": [
+      {
+        "uuid": "YCcdJmZyt62cx8R8fv8mTe",
+        "downlink_hz": 145977500,
+        "mode": "CW"
+      },
+      {
+        "uuid": "uLfAhJaZJUWmA9Sik8yQ2m",
+        "downlink_hz": 145925000,
+        "mode": "USB"
+      }
+    ],
+    "14129": [
+      {
+        "uuid": "ZyfLeKrLzypeK3Wn9iZrDV",
+        "downlink_hz": 145810000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "ae83giGVVtiqwjkiyPPvAa",
+        "downlink_hz": 145987000,
+        "mode": "CW"
+      }
+    ],
+    "14781": [
+      {
+        "uuid": "aBPWui23BqUhVc62nySNuQ",
+        "downlink_hz": 145825000,
+        "mode": "AFSK"
+      }
+    ],
+    "25544": [
+      {
+        "uuid": "PjfcFc4PZ8M8n3thuyA6x9",
+        "downlink_hz": 145800000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "ZJxCeQmih9zDfYNVrB4wRN",
+        "downlink_hz": 145825000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "pQRPwTWqQr7unDav5Mz4pG",
+        "downlink_hz": 145800000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "qW5N27QuSrN2JMasbNiUhR",
+        "downlink_hz": 145800000,
+        "mode": "SSTV"
+      }
+    ],
+    "26931": [
+      {
+        "uuid": "2dCbF2jmsxFpHw8ApevTMd",
+        "downlink_hz": 145825000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "UqNxMAshcYbg4EG6uPEkDt",
+        "downlink_hz": 144390000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "v5NW6by7m6NoK7gC2XCGyF",
+        "downlink_hz": 145826800,
+        "mode": "AFSK"
+      }
+    ],
+    "28650": [
+      {
+        "uuid": "2FLxMzHDWYXqgmKF7XX9Me",
+        "downlink_hz": 145860000,
+        "mode": "CW"
+      }
+    ],
+    "36799": [
+      {
+        "uuid": "FcDnv8HWpjWRSgdHofHhEd",
+        "downlink_hz": 145980000,
+        "mode": "FM"
+      }
+    ],
+    "39427": [
+      {
+        "uuid": "88v7p7asctEGk47ZrqF7yN",
+        "downlink_hz": 145815000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "Ne9UPFJErgJFcEzqADZJWL",
+        "downlink_hz": 145815000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "R5YQu55yNKd48di5HbPfe5",
+        "downlink_hz": 145860000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "TMxTiKcBFxGmTcWv2qYfUC",
+        "downlink_hz": 145818000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "mC6MpttrDi3hxmhzisPoeQ",
+        "downlink_hz": 145860000,
+        "mode": "AFSK"
+      }
+    ],
+    "39428": [
+      {
+        "uuid": "aRboijNaKGSDZu3ZVyTFX2",
+        "downlink_hz": 145870000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "xhcgD5AANWnK8r2jq6QVA7",
+        "downlink_hz": 145930000,
+        "mode": "BPSK"
+      }
+    ],
+    "39432": [
+      {
+        "uuid": "a5kpE63CcUXcGwLN4fY26k",
+        "downlink_hz": 145947000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "gHNdPTyE4v4yEkGBJzRFWV",
+        "downlink_hz": 145947000,
+        "mode": "FM"
+      }
+    ],
+    "39438": [
+      {
+        "uuid": "qi4FX8EQ2UsiwwEyhbuYT7",
+        "downlink_hz": 145980000,
+        "mode": "CW"
+      }
+    ],
+    "39444": [
+      {
+        "uuid": "Pt4MFHSC8UFHu3aTQTLz9K",
+        "downlink_hz": 145935000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "QsYRjdzExRFdZyJvcEw2GC",
+        "downlink_hz": 145815000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "kjb3TFADq77qj2AFSzxHCV",
+        "downlink_hz": 145950000,
+        "mode": "USB"
+      }
+    ],
+    "40024": [
+      {
+        "uuid": "s8jpdkUffam9RxRArizMQd",
+        "downlink_hz": 145865000,
+        "mode": "BPSK"
+      }
+    ],
+    "40025": [
+      {
+        "uuid": "AWujQt3WDBqLAmjXYtBgPZ",
+        "downlink_hz": 145815000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "qgm5DPSVdJ86YzehiYWQcX",
+        "downlink_hz": 145813660,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "u62BCJJmjWBRDLxYqLBYC5",
+        "downlink_hz": 145880000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "wVeqTcuPmKzk7LcWKfwmMH",
+        "downlink_hz": 145935000,
+        "mode": "USB"
+      }
+    ],
+    "40032": [
+      {
+        "uuid": "6DQp67crsBzih2LWRGFNFM",
+        "downlink_hz": 145878740,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "QE9FpDcXwx383HzouMDGCL",
+        "downlink_hz": 145880000,
+        "mode": "CW"
+      }
+    ],
+    "40055": [
+      {
+        "uuid": "sjVybmqJVwcqCuGnKV727T",
+        "downlink_hz": 145890000,
+        "mode": "BPSK"
+      }
+    ],
+    "40056": [
+      {
+        "uuid": "g6GLEgvyLTaEwshbd2CbJK",
+        "downlink_hz": 145890000,
+        "mode": "BPSK"
+      }
+    ],
+    "40057": [
+      {
+        "uuid": "nP9SjSXhoLLLi4Xso84aER",
+        "downlink_hz": 145980000,
+        "mode": "CW"
+      }
+    ],
+    "40074": [
+      {
+        "uuid": "7AchptE4yLHTtdLHSZQR4o",
+        "downlink_hz": 145840000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "7FGfFQtV3iYR8anFpbZKz3",
+        "downlink_hz": 145844200,
+        "mode": "CW"
+      },
+      {
+        "uuid": "9UHihpacwFrRmgZNAweK2g",
+        "downlink_hz": 145915000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "HWdDcVRpjQJCxMbtRkL5em",
+        "downlink_hz": 145840000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "NgyrK6zK9cb9cZVSSfE9m3",
+        "downlink_hz": 145930000,
+        "mode": "USB"
+      },
+      {
+        "uuid": "VkmkGr2WyemjUFRGmyA6yP",
+        "downlink_hz": 145843800,
+        "mode": "CW"
+      }
+    ],
+    "40719": [
+      {
+        "uuid": "nHWtq7t2BfC8pNYYpi4ZwS",
+        "downlink_hz": 145973700,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "yzLZeFypEj65qUKis3XrTd",
+        "downlink_hz": 145975000,
+        "mode": "BPSK"
+      }
+    ],
+    "40908": [
+      {
+        "uuid": "xHDr7c3A7TuTPFcVvHKQuN",
+        "downlink_hz": 144390000,
+        "mode": "AFSK"
+      }
+    ],
+    "40931": [
+      {
+        "uuid": "UFjhPnjt4obbuMMK4icvwQ",
+        "downlink_hz": 145825000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "x4TAmrVLwZo3hx946fHi44",
+        "downlink_hz": 145825000,
+        "mode": "AFSK"
+      }
+    ],
+    "41783": [
+      {
+        "uuid": "FbMz82s4DtgiUxGVXhn7YY",
+        "downlink_hz": 145980000,
+        "mode": "CW"
+      }
+    ],
+    "43017": [
+      {
+        "uuid": "KgazZMKEa74VnquqXLwAvD",
+        "downlink_hz": 145960000,
+        "mode": "DUV"
+      },
+      {
+        "uuid": "LoK6HANoyLWRnwhJKs8gHd",
+        "downlink_hz": 145960000,
+        "mode": "FM"
+      }
+    ],
+    "43678": [
+      {
+        "uuid": "HYB3Frb2cf4LUhzfbTCCw4",
+        "downlink_hz": 145900000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "JmHHyS3anLiFQg7GUv6F5A",
+        "downlink_hz": 145900000,
+        "mode": "CW"
+      }
+    ],
+    "43770": [
+      {
+        "uuid": "aQiKaeWH7YPEMNgGo5Qg58",
+        "downlink_hz": 145920000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "bxfwWfvm9UaXRvVfyhcjt6",
+        "downlink_hz": 145920000,
+        "mode": "DUV"
+      }
+    ],
+    "43786": [
+      {
+        "uuid": "Mhtbkk6uei97oKEmLkGLBm",
+        "downlink_hz": 145860000,
+        "mode": "BPSK"
+      }
+    ],
+    "43792": [
+      {
+        "uuid": "aj32dry5ZZkoA84yLYz8y8",
+        "downlink_hz": 145895000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "xTVXwsEVTjzmE7zGKTmGhg",
+        "downlink_hz": 145895000,
+        "mode": "BPSK"
+      },
+      {
+        "uuid": "y5GTUBzux5RccNkkSvcsfJ",
+        "downlink_hz": 145895000,
+        "mode": "BPSK"
+      }
+    ],
+    "43803": [
+      {
+        "uuid": "Epf9JK4hvNEAYuW49JiHtB",
+        "downlink_hz": 145855000,
+        "mode": "USB"
+      },
+      {
+        "uuid": "gWivxT7RmBwKK8WbVy6ucF",
+        "downlink_hz": 145855000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "ocoEf6MEZtiZgvEWSWsqtY",
+        "downlink_hz": 145840000,
+        "mode": "BPSK"
+      }
+    ],
+    "44881": [
+      {
+        "uuid": "ULirb3NLEoeEYkRWVgxLs6",
+        "downlink_hz": 145890000,
+        "mode": "GMSK"
+      },
+      {
+        "uuid": "YesbsWuP5etTXXb7UAnwaB",
+        "downlink_hz": 145915000,
+        "mode": "USB"
+      },
+      {
+        "uuid": "yRQzWTsHUnr8QEqG4ZafTH",
+        "downlink_hz": 145910000,
+        "mode": "CW"
+      }
+    ],
+    "44885": [
+      {
+        "uuid": "37STiZxCY6Yft8sZ68LWfE",
+        "downlink_hz": 145900000,
+        "mode": "GFSK"
+      }
+    ],
+    "48274": [
+      {
+        "uuid": "63EenHAYSzVfqrqshAroCP",
+        "downlink_hz": 145985000,
+        "mode": "SSTV"
+      },
+      {
+        "uuid": "A9LvMKMFVu7JMsaiVaDeoU",
+        "downlink_hz": 145985000,
+        "mode": "FMN"
+      },
+      {
+        "uuid": "TaCsx7ApXaJoZkZGcL6zJF",
+        "downlink_hz": 145985000,
+        "mode": "FMN"
+      },
+      {
+        "uuid": "jef9qEB6JhKDSPneswKWev",
+        "downlink_hz": 145825000,
+        "mode": "AFSK"
+      }
+    ],
+    "99914": [
+      {
+        "uuid": "HYS9gMdmAfCbSGoqtusTtG",
+        "downlink_hz": 145900000,
+        "mode": "FM"
+      },
+      {
+        "uuid": "iDUm3a8ocV68ZwFjcQ4bmB",
+        "downlink_hz": 145900000,
+        "mode": "AFSK"
+      }
+    ],
+    "49399": [
+      {
+        "uuid": "PSXKMkfdBXmue7GbeYYHrS",
+        "downlink_hz": 145875000,
+        "mode": "FSK AX.25 G3RUH"
+      }
+    ],
+    "99054": [
+      {
+        "uuid": "WhPVG3gSJNgCSTeJRYfM7K",
+        "downlink_hz": 145962500,
+        "mode": "USB"
+      },
+      {
+        "uuid": "kZaHmrqXqkJTyawyQexGFQ",
+        "downlink_hz": 144015000,
+        "mode": "GMSK"
+      }
+    ],
+    "59112": [
+      {
+        "uuid": "HaaJeCRRdYWsknWChvL8tZ",
+        "downlink_hz": 145825000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "KK2ZKWx59ArGiPuhxUs9aC",
+        "downlink_hz": 145840000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "Z4sobeTCrUzsnur45AiJVK",
+        "downlink_hz": 145880000,
+        "mode": "SSTV"
+      }
+    ],
+    "59065": [
+      {
+        "uuid": "34wa7RmYJLhjfwom3sBRBr",
+        "downlink_hz": 145000000,
+        "mode": "FM"
+      }
+    ],
+    "60237": [
+      {
+        "uuid": "UyJWovKjRxbB7frxkJEBdu",
+        "downlink_hz": 145935000,
+        "mode": "GFSK"
+      },
+      {
+        "uuid": "hpiPBMQVdd4K6ssBPe5M85",
+        "downlink_hz": 145935000,
+        "mode": "GFSK"
+      }
+    ],
+    "60239": [
+      {
+        "uuid": "7bUNwqQg2rgUi43L8wSuek",
+        "downlink_hz": 144550000,
+        "mode": "SSTV"
+      },
+      {
+        "uuid": "W38ScamJJy9py8Kdrpo4Wq",
+        "downlink_hz": 144175000,
+        "mode": "FT8"
+      }
+    ],
+    "60238": [
+      {
+        "uuid": "XHnnqeuv8pDg9fxhHgGzYn",
+        "downlink_hz": 145895000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "fTp2tUDzeGEBW92867CdZD",
+        "downlink_hz": 145895000,
+        "mode": "CW"
+      }
+    ],
+    "98796": [
+      {
+        "uuid": "8A9PKXNS2FwbTmPR7TLEUF",
+        "downlink_hz": 145895000,
+        "mode": "BPSK"
+      }
+    ],
+    "98771": [
+      {
+        "uuid": "8RhiWYvKPCjZ2xNV7fcF8q",
+        "downlink_hz": 144225000,
+        "mode": "FM"
+      }
+    ],
+    "98707": [
+      {
+        "uuid": "SbiRPsRmY7svdH9ZEEXjNU",
+        "downlink_hz": 145825000,
+        "mode": "AFSK"
+      }
+    ],
+    "98600": [
+      {
+        "uuid": "8mKJkGXE6EJDSQ84y786Am",
+        "downlink_hz": 145925000,
+        "mode": "GMSK"
+      },
+      {
+        "uuid": "JLo4L8x2AjaMMsZKQy5Bdp",
+        "downlink_hz": 145825000,
+        "mode": "AFSK"
+      }
+    ],
+    "64535": [
+      {
+        "uuid": "LbGdFspGFYakW69oAKrLGh",
+        "downlink_hz": 145900000,
+        "mode": "FSK AX.100 Mode 5"
+      }
+    ],
+    "64549": [
+      {
+        "uuid": "QVk9iYroPhB4VtdwcbpbRH",
+        "downlink_hz": 145900000,
+        "mode": "FSK AX.100 Mode 5"
+      }
+    ],
+    "67683": [
+      {
+        "uuid": "JR28wAEjmpuDQ4FrPWAiwf",
+        "downlink_hz": 145825000,
+        "mode": "FSK"
+      }
+    ],
+    "98324": [
+      {
+        "uuid": "DuxSqV7q3YhaLBJKmg23Lk",
+        "downlink_hz": 145850000,
+        "mode": "AFSK"
+      },
+      {
+        "uuid": "Ltzc4CMTfaN4EjiNK85Tsb",
+        "downlink_hz": 145850000,
+        "mode": "GMSK"
+      },
+      {
+        "uuid": "Wqgqvw6HytmdcFGJV7FWkt",
+        "downlink_hz": 145850000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "mL3Cb3qEuLTPHMTG5qbkJu",
+        "downlink_hz": 145850000,
+        "mode": "GMSK"
+      }
+    ],
+    "98272": [
+      {
+        "uuid": "3DpNASTddtcH9zHEmZpsFK",
+        "downlink_hz": 145875000,
+        "mode": "CW"
+      },
+      {
+        "uuid": "a8xkbabTFt847p5FLDZsSP",
+        "downlink_hz": 145875000,
+        "mode": "FSK AX.100 Mode 5"
+      }
+    ],
+    "98293": [
+      {
+        "uuid": "5ZAjuziycSLXAq2xKYRg9B",
+        "downlink_hz": 145925000,
+        "mode": "GFSK"
+      },
+      {
+        "uuid": "GqaKbFf2Cq6MZinRpdb5br",
+        "downlink_hz": 145925000,
+        "mode": "GFSK"
+      }
+    ],
+    "98266": [
+      {
+        "uuid": "Z3QiGhjEGUaXGzZbdV9fD3",
+        "downlink_hz": 145825000,
+        "mode": "AFSK"
+      }
+    ],
+    "69916": [
+      {
+        "uuid": "9srrjnRRsgYngn8AiSUy9P",
+        "downlink_hz": 145825000,
+        "mode": "AFSK"
+      }
+    ],
+    "98208": [
+      {
+        "uuid": "GGzesaSC3m6tTiTnDVuW25",
+        "downlink_hz": 145920000,
+        "mode": "FSK"
+      },
+      {
+        "uuid": "jfphewxSz9Bz8vqpaYHkVY",
+        "downlink_hz": 145920000,
+        "mode": "GMSK"
+      }
+    ],
+    "98209": [
+      {
+        "uuid": "BgZp7u3sEGTcHNe385puBG",
+        "downlink_hz": 145960000,
+        "mode": "GMSK"
+      },
+      {
+        "uuid": "jK8Brce3QVjXJ7msde3jqs",
+        "downlink_hz": 145960000,
+        "mode": "FSK"
+      }
+    ],
+    "98236": [
+      {
+        "uuid": "joP3pXJ8R48XCqzzXzYGd6",
+        "downlink_hz": 145825000,
+        "mode": "AFSK"
+      }
+    ],
+    "98185": [
+      {
+        "uuid": "7jpgTb4BtnKb7in5UV5oEZ",
+        "downlink_hz": 145825000,
+        "mode": "AFSK"
+      }
+    ]
+  }
+}

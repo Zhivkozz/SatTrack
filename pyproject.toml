@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sattrack"
+dynamic = ["version"]
+description = "Автоматично приемане на радиолюбителски сателити с Yaesu FT-991A (само RX)"
+requires-python = ">=3.11"
+dependencies = [
+    "skyfield>=1.48",
+    "pyserial>=3.5",
+    "sounddevice>=0.4.6",
+    "numpy>=1.26",
+    "requests>=2.31",
+    "tzdata; platform_system == 'Windows'",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+sattrack = "sattrack.cli:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "sattrack.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["sattrack*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

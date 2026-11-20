@@ -1,0 +1,58 @@
+{
+  "station": {
+    "name": "Troyan",
+    "latitude_deg": 42.89,
+    "longitude_deg": 24.71,
+    "elevation_m": 400,
+    "timezone": "Europe/Sofia"
+  },
+  "radio": {
+    "port": "COM3",
+    "baudrate": 38400,
+    "timeout_s": 1.0,
+    "stopbits": 1,
+    "squelch": 0
+  },
+  "band": {
+    "downlink_ranges_mhz": [[144.0, 146.0]]
+  },
+  "passes": {
+    "min_elevation_deg": 30,
+    "horizon_hours": 48,
+    "overlap_rule": "max_elevation",
+    "prestart_s": 20
+  },
+  "doppler": {
+    "FM":  {"interval_s": 5.0, "threshold_hz": 500},
+    "AM":  {"interval_s": 5.0, "threshold_hz": 500},
+    "SSB": {"interval_s": 1.0, "threshold_hz": 50},
+    "CW":  {"interval_s": 1.0, "threshold_hz": 50}
+  },
+  "data": {
+    "refresh_hours": 24,
+    "retry_minutes": 60,
+    "max_age_days": 3,
+    "max_age_days_narrow": 1.5,
+    "activity_hours": 24,
+    "amsat_aliases": {}
+  },
+  "selection": {
+    "auto_count": 7
+  },
+  "satellites": {
+    "overrides": [
+      {"norad_id": 25544, "name": "ISS", "frequency_hz": 145800000, "mode": "FM", "enabled": true}
+    ]
+  },
+  "recording": {
+    "dir": "recordings",
+    "device": "USB Audio CODEC",
+    "samplerate": 48000,
+    "channels": 1,
+    "keep_days": null
+  },
+  "log": {
+    "dir": "logs",
+    "level": "INFO"
+  }
+}
