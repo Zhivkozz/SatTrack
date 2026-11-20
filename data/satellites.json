@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-11-20T11:49:01+00:00",
+  "updated": "2026-11-20T13:02:02+00:00",
   "confirmed": true,
   "selection": [
     {
@@ -14,7 +14,7 @@
       "source": "manual",
       "transmitter": "Mode V/V FM (crew R2+3) [FM]",
       "transmitter_uuid": "PjfcFc4PZ8M8n3thuyA6x9",
-      "activity": 27
+      "activity": 26
     },
     {
       "norad_id": 7530,
@@ -79,7 +79,7 @@
       "source": "auto",
       "transmitter": "Mode V - R2 Backup APRS 1K2 [AFSK]",
       "transmitter_uuid": "UqNxMAshcYbg4EG6uPEkDt",
-      "activity": 3
+      "activity": 2
     },
     {
       "norad_id": 67683,

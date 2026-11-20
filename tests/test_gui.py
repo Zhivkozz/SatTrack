@@ -58,6 +58,21 @@ def test_gui_builds_and_shows_data(app):
     assert "спряна" in app.state_lbl.cget("text")
 
 
+def test_gui_refresh_shows_result(app):
+    from sattrack.sources import RefreshReport
+    app.store.refresh = lambda: RefreshReport(
+        ok={"tle": True, "transmitters": False, "activity": True},
+        errors={"transmitters": "Connection to db.satnogs.org timed out."})
+    pump(app)
+    app.refresh_data()
+    pump(app, 5)
+    text = app.out_txt.get("1.0", "end")
+    assert "✓ Орбити (CelesTrak): обновено" in text
+    assert "✗ Честоти (SatNOGS DB): сървърът не отговаря" in text
+    assert "непълна" in text
+    assert "disabled" not in app.btn_refresh.state()
+
+
 def test_gui_toggle_satellite_persists(app, cfg):
     app.sat_tree.selection_set("25544")
     app.toggle_sat()

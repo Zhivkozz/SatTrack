@@ -823,6 +823,8 @@ class App:
         ttk.Label(tab, text="Резултат:", font=FONT_BOLD).pack(anchor="w", pady=(12, 4))
         self.out_txt = ScrolledText(tab, font=FONT_MONO, height=12, state="disabled")
         self.out_txt.pack(fill="both", expand=True)
+        self._out("Тук се показват резултатите от бутоните „Обнови данните сега“, „Провери радиото“,\n"
+                  "„Тест на режимите“ и „Тест на аудиото“.")
 
     def _out(self, text: str, clear: bool = False) -> None:
         self.out_txt.configure(state="normal")
@@ -844,13 +846,44 @@ class App:
         warns = self.store.freshness_warnings()
         self.data_warn.configure(text="\n".join("⚠ " + w for w in warns))
 
+    def _show_refresh_report(self, rep, err=None) -> None:
+        names = {"tle": "Орбити (CelesTrak)", "transmitters": "Честоти (SatNOGS DB)",
+                 "activity": "Активност (AMSAT)"}
+        if err is not None or rep is None:
+            self._out(f"ГРЕШКА при сверката: {err}")
+        else:
+            for k, name in names.items():
+                if rep.ok.get(k):
+                    self._out(f"  ✓ {name}: обновено")
+                else:
+                    e = str(rep.errors.get(k, "не е опитано"))
+                    short = "сървърът не отговаря" if "timed out" in e or "Timeout" in e else e[:150]
+                    self._out(f"  ✗ {name}: {short} — ползва се кешът")
+            self._out("Сверката приключи." if rep.all_ok else
+                      "Сверката е непълна. Програмата ще опита пак по-късно.")
+        self.btn_refresh.state(["!disabled"])
+        self._after_refresh()
+
     def refresh_data(self) -> None:
+        self.btn_refresh.state(["disabled"])
+        self.nb.select(len(self.nb.tabs()) - 1)
         if self.running and self.sched:
             self.sched.request_refresh()
+            asked = time.time()
+            self._out("Сверката е заявена. Ще се изпълни между преминаванията (около 1 минута)…", clear=True)
             log.info("Сверката е заявена; ще се изпълни между преминаванията.")
-            self.root.after(15000, self._after_refresh)
+
+            def wait():
+                lr = self.sched.last_refresh if self.sched else None
+                if lr and lr[0] >= asked:
+                    self._show_refresh_report(lr[1])
+                elif self.running:
+                    self.root.after(1000, wait)
+                else:
+                    self.btn_refresh.state(["!disabled"])
+            self.root.after(1000, wait)
             return
-        self.btn_refresh.state(["disabled"])
+        self._out("Сверка на данните (около 1 минута)…", clear=True)
         log.info("Сверка на данните…")
 
         def work():
@@ -858,16 +891,7 @@ class App:
             self._rebuild_selection()
             return rep
 
-        def done(rep, err):
-            self.btn_refresh.state(["!disabled"])
-            if rep is not None:
-                for k, ok in rep.ok.items():
-                    if not ok:
-                        log.warning("%s: %s (ползва се кешът)", k, rep.errors.get(k))
-                log.info("Сверката приключи.")
-            self._after_refresh()
-
-        self.bg("Сверка", work, done)
+        self.bg("Сверка", work, lambda rep, err: self._show_refresh_report(rep, err))
 
     def _after_refresh(self) -> None:
         self.refresh_data_info()

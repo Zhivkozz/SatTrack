@@ -76,6 +76,7 @@ class Scheduler:
         self.status: dict = {"state": "stopped"}
         self._refresh_req = False
         self._reload_req = False
+        self.last_refresh: tuple[float, object] | None = None
 
     # --- заявки от интерфейса (изпълняват се между преминаванията, FR-17) ---
     def request_refresh(self) -> None:
@@ -103,6 +104,7 @@ class Scheduler:
             return
         log.info("Сверка на орбитните данни и честотите...")
         rep = self.store.refresh()
+        self.last_refresh = (time.time(), rep)  # за интерфейса
         if not rep.all_ok:
             self.next_refresh_try = now + timedelta(minutes=self.cfg.section("data")["retry_minutes"])
             log.warning("Сверката е непълна; нов опит след %s мин.",
