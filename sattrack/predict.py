@@ -14,6 +14,9 @@ from sattrack.catalog import SatEntry
 
 _ts = load.timescale(builtin=True)
 
+# Колко назад се търси, за да се хване текущо преминаване (LEO преминаване < 25 мин).
+LOOKBACK = timedelta(minutes=30)
+
 
 def timescale():
     return _ts
@@ -32,6 +35,9 @@ class Pass:
     @property
     def duration_s(self) -> float:
         return (self.los - self.aos).total_seconds()
+
+    def in_progress(self, now: datetime) -> bool:
+        return self.aos <= now < self.los
 
     def overlaps(self, other: "Pass", margin_s: float = 0) -> bool:
         m = timedelta(seconds=margin_s)
@@ -56,7 +62,12 @@ class Predictor:
 
     def passes(self, entries: list[SatEntry], start: datetime, hours: float,
                min_max_el: float) -> list[Pass]:
-        t0 = _ts.from_datetime(start)
+        """Преминавания, които не са приключили до `start`, включително текущото.
+
+        Търсенето започва LOOKBACK по-рано, за да се намерят истинските начало,
+        връх и максимална височина на преминаване, което вече тече.
+        """
+        t0 = _ts.from_datetime(start - LOOKBACK)
         t1 = _ts.from_datetime(start + timedelta(hours=hours))
         out: list[Pass] = []
         for e in entries:
@@ -74,7 +85,7 @@ class Predictor:
                     if el > cur.get("el", -90):
                         cur.update(tca=t, el=el)
                 elif ev == 2 and "tca" in cur:
-                    if cur["el"] >= min_max_el:
+                    if cur["el"] >= min_max_el and t.utc_datetime() > start:
                         out.append(Pass(
                             sat=e, aos=cur["aos"].utc_datetime(), tca=cur["tca"].utc_datetime(),
                             los=t.utc_datetime(), max_elevation_deg=round(float(cur["el"]), 1),
@@ -114,11 +125,14 @@ def choose_non_overlapping(passes: list[Pass], rule: str = "max_elevation",
 
 def format_passes(passes: list[Pass], tz: str, chosen: list[Pass] | None = None) -> str:
     z = ZoneInfo(tz)
+    now = datetime.now(timezone.utc)
     chosen_ids = {id(p) for p in chosen} if chosen is not None else None
     rows = [f"{'':1} {'Дата':10} {'AOS':8} {'TCA':8} {'LOS':8} {'Макс':>5} {'Мин':>4}  "
             f"{'Сателит':18} {'Честота':>11} Режим"]
     for p in passes:
         mark = " " if chosen_ids is None else ("*" if id(p) in chosen_ids else "-")
+        if p.in_progress(now):
+            mark = "▶" if mark != "-" else mark
         a = p.aos.astimezone(z)
         rows.append(
             f"{mark} {a:%Y-%m-%d} {a:%H:%M:%S} {p.tca.astimezone(z):%H:%M:%S} "
@@ -126,7 +140,7 @@ def format_passes(passes: list[Pass], tz: str, chosen: list[Pass] | None = None)
             f"{p.duration_s / 60:4.1f}  {p.sat.name[:18]:18} "
             f"{p.sat.frequency_hz / 1e6:11.4f} {p.sat.mode}")
     if chosen_ids is not None:
-        rows.append("* = ще се записва, - = пропуска се заради припокриване")
+        rows.append("* = ще се записва, ▶ = тече в момента, - = пропуска се заради припокриване")
     return "\n".join(rows)
 
 

@@ -20,7 +20,7 @@ from sattrack.sources import DataStore
 
 log = logging.getLogger(__name__)
 
-LATE_START_GRACE_S = 60      # закъснял старт (след пауза/сверка) е допустим до 1 минута след AOS
+MIN_REMAINING_S = 60         # текущо преминаване се записва, ако остава поне толкова
 SMETER_INTERVAL_S = 2.0
 STATUS_INTERVAL_S = 15.0
 SCHEDULE_REBUILD_H = 6
@@ -199,12 +199,12 @@ class Scheduler:
             if self.schedule_built is None or now - self.schedule_built > timedelta(hours=SCHEDULE_REBUILD_H):
                 self.build_schedule()
 
-            # изпуснати или вече приключили преминавания
-            while self.schedule and now > self.schedule[0].aos + timedelta(seconds=LATE_START_GRACE_S):
+            # Преминаване, което вече тече, се записва веднага (нов запис от този
+            # момент), стига да остава поне MIN_REMAINING_S. Отпадат само приключилите.
+            while self.schedule and now > self.schedule[0].los - timedelta(seconds=MIN_REMAINING_S):
                 p = self.schedule.pop(0)
                 if now < p.los:
-                    log.info("Пропуснато (започнало в %s): %s",
-                             p.aos.astimezone(self.passlog.tz).strftime("%H:%M"), p.sat.name)
+                    log.info("Пропуснато (остават под %d s): %s", MIN_REMAINING_S, p.sat.name)
             if not self.schedule:
                 self.build_schedule()
                 if not self.schedule:
@@ -303,6 +303,14 @@ class Scheduler:
             "data_version": self.store.data_version(),
             "events": [],
         }
+        late_s = (now - p.aos).total_seconds()
+        if late_s > 0:
+            el_now = self.predictor.look(s.norad_id, now)[0]
+            msg = (f"започнат със закъснение: {late_s / 60:.1f} мин след AOS "
+                   f"(сателитът вече е на {el_now:.0f}°)")
+            record["events"].append(msg)
+            record["late_start_s"] = round(late_s)
+            log.info("%s е над хоризонта — записът започва веднага, %s", s.name, msg)
         self.passlog.write(stem, record)
 
         try:

@@ -62,6 +62,23 @@ def test_full_pass_dry_run(cfg):
     assert (cfg.data_dir / "index.json").exists()
 
 
+def test_start_during_pass_records_immediately(cfg):
+    """Старт, докато сателитът е над хоризонта — записът започва веднага."""
+    from sattrack.catalog import SatEntry
+    from sattrack.predict import Predictor
+    cfg.raw["passes"]["min_elevation_deg"] = 10
+    first = Predictor(cfg.station, ISS_TLE).passes(
+        [SatEntry(25544, "ISS", 145_800_000, "FM")], T0, 24, 10)[0]
+    mid = first.aos + timedelta(minutes=3)
+    sch, radio = make(cfg, mid)
+    sch.run(max_passes=1)
+    rec = json.loads(next((cfg.data_dir / "passes").glob("*.json")).read_text(encoding="utf-8"))
+    assert rec["status"] == "complete"
+    assert 175 <= rec["late_start_s"] <= 185
+    assert "закъснение" in rec["events"][0]
+    assert radio.sent.count("MD04;") == 1
+
+
 def test_mode_change_shift_is_overwritten(cfg):
     """FT-991A мести честотата при смяна AM->USB; след настройка тя трябва да е точна."""
     from sattrack.catalog import SatEntry

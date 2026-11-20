@@ -398,13 +398,26 @@ class App:
         else:
             nxt: Pass | None = st.get("next") if state in ("waiting", "paused") else None
             if nxt is None and not self.running:
-                nxt = next((p for p in self.chosen if p.los > now), None)
+                nxt = next((p for p in self.chosen if p.los > now + timedelta(seconds=60)), None)
             for lbl in v.values():
                 lbl.configure(text="—")
             self.sm_bar["value"] = 0
             self.sm_lbl.configure(text="—")
             self.pass_bar["value"] = 0
-            if nxt:
+            if nxt and nxt.in_progress(now):
+                self.st_title.configure(text=f"Над нас: {nxt.sat.name}", fg="#c2410c")
+                self.st_sub.configure(text=f"преминава в момента, до {self.local(nxt.los, '%H:%M')} "
+                                           f"(още {fmt_td(nxt.los - now)})  •  макс. {nxt.max_elevation_deg:.0f}°"
+                                           + ("" if self.running else "  •  натиснете ▶ Старт за запис"))
+                v["mode"].configure(text=f"{nxt.sat.mode}  {nxt.sat.frequency_hz / 1e6:.4f} MHz")
+                self.pass_lbl.configure(text="")
+                pos = None
+                pred = self.predictor
+                if pred and pred.has(nxt.sat.norad_id):
+                    el, az, _ = pred.look(nxt.sat.norad_id, now)
+                    pos = (el, az)
+                self.sky.show(self._pass_track(nxt), pos, min_el, f"{nxt.sat.name} — сега")
+            elif nxt:
                 self.st_title.configure(text=f"Следва: {nxt.sat.name}", fg="#111827")
                 wait = nxt.aos - now
                 self.st_sub.configure(text=f"в {self.local(nxt.aos, '%H:%M')} (след {fmt_td(wait)})  •  "
@@ -420,7 +433,7 @@ class App:
                 self.sky.show([], None, min_el)
 
         upcoming = (list(self.sched.schedule) if self.running and self.sched
-                    else [p for p in self.chosen if p.aos > now])[:8]
+                    else [p for p in self.chosen if p.los > now + timedelta(seconds=60)])[:8]
         ids = [f"{p.sat.norad_id}-{p.aos.timestamp():.0f}" for p in upcoming]
         if ids != list(self.next_tree.get_children()):
             self.next_tree.delete(*self.next_tree.get_children())
@@ -578,7 +591,9 @@ class App:
             chosen_ids = {id(x) for x in self.chosen}
             self.fc_tree.delete(*self.fc_tree.get_children())
             for i, p in enumerate(self.forecast):
-                if id(p) in chosen_ids:
+                if id(p) in chosen_ids and p.in_progress(datetime.now(timezone.utc)):
+                    rec, tag = "▶ тече сега", "rec"
+                elif id(p) in chosen_ids:
                     rec, tag = "✓ запис", "rec"
                 elif p.max_elevation_deg < min_el:
                     rec, tag = "под прага", "skip"

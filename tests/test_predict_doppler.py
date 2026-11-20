@@ -43,6 +43,19 @@ def test_passes_and_doppler_sign():
     assert len(high) <= len(passes)
 
 
+def test_pass_in_progress_is_included():
+    from datetime import timedelta
+    pr = Predictor(STATION, ISS_TLE)
+    p = pr.passes([ISS], T0, 24, 0)[0]
+    mid = p.aos + timedelta(minutes=3)
+    again = pr.passes([ISS], mid, 24, 0)[0]
+    assert again.in_progress(mid)
+    assert abs((again.aos - p.aos).total_seconds()) < 2      # истинското начало, не „сега“
+    assert again.max_elevation_deg == p.max_elevation_deg
+    after = pr.passes([ISS], p.los + timedelta(seconds=1), 24, 0)
+    assert after[0].aos > p.los                                # приключилото не се връща
+
+
 def test_overlap_rule():
     a = Pass(ISS, datetime(2026, 1, 1, 10, 0, tzinfo=timezone.utc), datetime(2026, 1, 1, 10, 5, tzinfo=timezone.utc),
              datetime(2026, 1, 1, 10, 10, tzinfo=timezone.utc), 40)
