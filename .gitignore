@@ -16,3 +16,8 @@ logs/
 
 # Флаг за пауза (FR-35)
 data/PAUSE
+
+# Данни, които програмата създава сама: дневник на преминаванията и текущ списък
+data/passes/
+data/index.json
+data/satellites.json

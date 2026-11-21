@@ -3,7 +3,7 @@
 Автоматичният избор се прави от SatNOGS DB (активни предаватели в разрешения
 обхват), подреден по брой доклади „чут“ в AMSAT status за последните 24 часа.
 Ръчните настройки от config.json (satellites.overrides) имат предимство.
-Резултатът се пази в data/satellites.json (четим, в Git).
+Резултатът се пази в data/satellites.json (четим, извън Git).
 """
 
 from __future__ import annotations

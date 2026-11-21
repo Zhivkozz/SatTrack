@@ -93,7 +93,7 @@ sattrack-gui
 - `data/satellites.json`: текущият списък за слушане и кандидатите. Служи за засичане на промени (FR-16).
 - `data/passes/*.json`: по един файл за всяко преминаване. Статусите са `complete`, `incomplete` (рестарт по време на запис), `aborted` (пауза или изход).
 - `data/index.json`: общ индекс на преминаванията.
-- `recordings/*.wav`, `cache/`, `logs/sattrack.log`: не влизат в Git.
+- Нищо от горните, както и `recordings/` (WAV и SSTV картини), `cache/` и `logs/`, не влиза в Git. Програмата ги създава сама.
 
 ## Тестове
 
