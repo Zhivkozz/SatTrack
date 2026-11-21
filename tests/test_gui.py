@@ -96,6 +96,31 @@ def test_gui_delete_record(app, cfg):
     assert not (pl.dir / "2026-11-21T04-12_ISS.json").exists()
 
 
+def test_gui_record_timeline_shows_signals(app, cfg):
+    from test_signals import make_wav
+    from sattrack.passlog import PassLog
+    cfg.path("recordings").mkdir(parents=True, exist_ok=True)
+    make_wav(cfg.path("recordings/s.wav"), quiet=(30.0, 31.0))
+    PassLog(cfg).write("2026-11-21T04-12_ISS", {"status": "complete", "mode": "FM",
+                                                "satellite": {"name": "ISS", "norad_id": 25544},
+                                                "start": "2026-11-21T04:12:00+02:00", "audio_file": "recordings/s.wav"})
+    app.refresh_records()                      # starts the background analysis
+    app.rec_tree.selection_set("0")
+    app._on_rec_select()
+    pump(app, 10)
+    assert app.rec_tree.set("0", "sig").startswith("1 · ")
+    assert app.rec_sig and app.rec_sig["segments"][0]["kind"] == "FM"
+    assert app.timeline.duration == pytest.approx(60)
+    assert "Сигнали: 1" in app.tl_info.cget("text")
+    started = []                               # playback needs an audio device; check the target only
+    app._start_playback = lambda start=None: started.append(start)
+    app.player.seek(5)
+    app.jump_signal(1)
+    assert started[-1] == pytest.approx(29, abs=0.5)   # 1 s before the signal
+    app.delete_record(confirm=False)           # the selected WAV is not locked
+    assert not cfg.path("recordings/s.wav").exists()
+
+
 def test_gui_toggle_satellite_persists(app, cfg):
     app.sat_tree.selection_set("25544")
     app.toggle_sat()

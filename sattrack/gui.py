@@ -128,6 +128,91 @@ class SkyPlot(tk.Canvas):
             self.create_oval(x - 7, y - 7, x + 7, y + 7, fill="#dc2626", outline="white", width=2)
 
 
+def fmt_mmss(s: float) -> str:
+    s = max(0, int(s))
+    return f"{s // 60}:{s % 60:02d}"
+
+
+# --------------------------------------------------------------------------
+# Времева линия на запис: къде в него има сигнал
+# --------------------------------------------------------------------------
+
+class SignalTimeline(tk.Canvas):
+    """Whole recording on one strip: activity envelope, detected signals, playhead.
+
+    Clicking calls on_seek(seconds).
+    """
+    COLORS = {"FM": "#16a34a", "tone": "#d97706"}
+
+    def __init__(self, master, height: int, on_seek: Callable[[float], None]):
+        super().__init__(master, height=height, bg="#f8fafc", highlightthickness=1,
+                         highlightbackground="#d1d5db", cursor="hand2")
+        self.on_seek = on_seek
+        self.duration = 0.0
+        self.sig: dict | None = None
+        self.message = ""
+        self.pos = 0.0
+        self.bind("<Configure>", lambda e: self.redraw())
+        self.bind("<Button-1>", self._click)
+
+    def show(self, duration: float, sig: dict | None, message: str = "") -> None:
+        self.duration, self.sig, self.message, self.pos = duration, sig, message, 0.0
+        self.redraw()
+
+    def set_position(self, pos: float) -> None:
+        self.pos = pos
+        self._draw_playhead()
+
+    def _x(self, t: float) -> float:
+        w = max(1, self.winfo_width() - 2)
+        return 1 + w * t / self.duration if self.duration else 1
+
+    def _click(self, e) -> None:
+        if self.duration:
+            w = max(1, self.winfo_width() - 2)
+            self.on_seek(max(0.0, min(self.duration, (e.x - 1) / w * self.duration)))
+
+    def redraw(self) -> None:
+        self.delete("all")
+        W, H = self.winfo_width(), self.winfo_height()
+        axis_h = 14
+        top, bot = 4, H - axis_h
+        if self.duration <= 0:
+            self.create_text(W / 2, H / 2, text=self.message or "Изберете запис с аудио",
+                             fill="#6b7280", font=FONT)
+            return
+        sig = self.sig or {}
+        act, step = sig.get("activity") or "", sig.get("activity_step_s") or 1.0
+        for i, ch in enumerate(act):          # activity envelope (0-9 per second)
+            v = int(ch)
+            if v:
+                y = bot - (bot - top) * v / 9
+                self.create_rectangle(self._x(i * step), y, self._x((i + 1) * step), bot,
+                                      fill="#93c5fd", outline="")
+        for s in sig.get("segments") or []:   # detected signals: band on top, light area below
+            x0, x1 = self._x(s["start"]), self._x(s["end"])
+            x1 = max(x1, x0 + 3)
+            col = self.COLORS.get(s.get("kind"), "#16a34a")
+            self.create_rectangle(x0, top, x1, bot, fill="", outline=col, width=1)
+            self.create_rectangle(x0, top, x1, top + 8, fill=col, outline="")
+        self.create_line(0, bot, W, bot, fill="#9ca3af")
+        span = self.duration / 60
+        every = 1 if span <= 16 else 2 if span <= 32 else 5
+        for m in range(every, int(span) + 1, every):
+            x = self._x(m * 60)
+            self.create_line(x, bot, x, bot + 4, fill="#6b7280")
+            self.create_text(x, bot + 3, text=f"{m}:00", anchor="n", fill="#6b7280", font=("Segoe UI", 7))
+        if self.message:
+            self.create_text(6, top + 10, text=self.message, anchor="nw", fill="#6b7280", font=FONT)
+        self._draw_playhead()
+
+    def _draw_playhead(self) -> None:
+        self.delete("playhead")
+        if self.duration > 0:
+            x = self._x(self.pos)
+            self.create_line(x, 0, x, self.winfo_height(), fill="#dc2626", width=2, tags="playhead")
+
+
 # --------------------------------------------------------------------------
 # Главен прозорец
 # --------------------------------------------------------------------------
@@ -500,11 +585,7 @@ class App:
             if not messagebox.askyesno("SatTrack", "Автоматиката работи. Да се спре ли и да се затвори?"):
                 return
             self.stop(wait=True)
-        try:
-            import winsound
-            winsound.PlaySound(None, 0)
-        except Exception:
-            pass
+        self.player.stop()
         self.root.destroy()
 
     def _after_settings_change(self) -> None:
@@ -693,24 +774,43 @@ class App:
 
     # ---------------- Записи ----------------
     def _build_records_tab(self) -> None:
+        from sattrack.player import Player
+        self.player = Player()
+        self.rec_sig: dict | None = None        # signals of the selected record
+        self.rec_start: datetime | None = None  # its start time (for clock time of a position)
+        self._play_job: str | None = None
         tab = ttk.Frame(self.nb, padding=10)
         self.nb.add(tab, text="  Записи  ")
         bar = ttk.Frame(tab)
         bar.pack(fill="x", pady=(0, 8))
-        ttk.Button(bar, text="▶ Пусни", command=self.play).pack(side="left")
+        self.btn_play = ttk.Button(bar, text="▶ Пусни", width=10, command=self.play)
+        self.btn_play.pack(side="left")
         ttk.Button(bar, text="■ Спри", command=self.stop_play).pack(side="left", padx=4)
-        ttk.Button(bar, text="Отвори в плейър", command=self.open_player).pack(side="left", padx=4)
-        ttk.Button(bar, text="Папка със записите", command=self.open_folder).pack(side="left", padx=4)
+        ttk.Button(bar, text="⏮ Предишен сигнал", command=lambda: self.jump_signal(-1)).pack(side="left", padx=(12, 4))
+        ttk.Button(bar, text="Следващ сигнал ⏭", command=lambda: self.jump_signal(1)).pack(side="left", padx=4)
+        ttk.Button(bar, text="Отвори в плейър", command=self.open_player).pack(side="left", padx=(12, 4))
+        ttk.Button(bar, text="Папка", command=self.open_folder).pack(side="left", padx=4)
         ttk.Button(bar, text="⟳ Обнови", command=self.refresh_records).pack(side="right")
         ttk.Button(bar, text="🗑 Изтрий", command=self.delete_record).pack(side="right", padx=(0, 16))
 
+        tl = ttk.Frame(tab)
+        tl.pack(side="bottom", fill="x", pady=(8, 0))
+        info = ttk.Frame(tl)
+        info.pack(fill="x")
+        self.tl_info = ttk.Label(info, text="", font=FONT)
+        self.tl_info.pack(side="left")
+        self.tl_pos = ttk.Label(info, text="", font=FONT_BOLD)
+        self.tl_pos.pack(side="right")
+        self.timeline = SignalTimeline(tl, height=self.px(70), on_seek=self.seek_play)
+        self.timeline.pack(fill="x", pady=(2, 0))
+
         paned = ttk.PanedWindow(tab, orient="horizontal")
         paned.pack(fill="both", expand=True)
-        cols = ("when", "sat", "el", "mode", "smax", "status", "audio")
+        cols = ("when", "sat", "el", "mode", "smax", "status", "audio", "sig")
         self.rec_tree = ttk.Treeview(paned, columns=cols, show="headings", selectmode="browse")
         self._columns(self.rec_tree, (("when", "Начало", 130), ("sat", "Сателит", 140), ("el", "Макс.", 55),
                                       ("mode", "Режим", 58), ("smax", "S макс.", 65), ("status", "Статус", 90),
-                                      ("audio", "Аудио", 55)), stretch=("sat",))
+                                      ("audio", "Аудио", 55), ("sig", "Сигнали", 85)), stretch=("sat",))
         self.rec_tree.tag_configure("bad", foreground="#c2410c")
         self.rec_tree.bind("<<TreeviewSelect>>", self._on_rec_select)
         self.rec_tree.bind("<Double-1>", lambda e: self.play())
@@ -719,29 +819,74 @@ class App:
         self.rec_detail = ScrolledText(paned, font=FONT_MONO, width=48, state="disabled")
         paned.add(self.rec_detail, weight=2)
 
+    @staticmethod
+    def _sig_text(sig: dict | None) -> str:
+        from sattrack.signals import summary
+        if sig is None:
+            return "…"
+        n, total = summary(sig)
+        return f"{n} · {total:.0f} s" if n else "няма"
+
     def refresh_records(self) -> None:
+        from sattrack import signals
         idx = read_json(self.cfg.data_dir / "index.json", {}) or {}
         self.records = list(reversed(idx.get("passes", [])))
         self.rec_tree.delete(*self.rec_tree.get_children())
         status_bg = {"complete": "завършен", "incomplete": "непълен", "aborted": "прекъснат",
                      "in_progress": "записва"}
+        pending = []
         for i, r in enumerate(self.records):
             rec = read_json(self.cfg.data_dir / r["file"], {}) or {}
             audio = rec.get("audio_file")
             has_audio = bool(audio) and self.cfg.path(audio).exists()
+            sig_txt = "—"
+            if has_audio and rec.get("status") != "in_progress":
+                sig = signals.cached(rec, self.cfg.path(audio))
+                sig_txt = self._sig_text(sig)
+                if sig is None:
+                    pending.append(r["file"])
             start = r.get("start") or ""
             when = start[:16].replace("T", "  ") if start else "?"
             self.rec_tree.insert("", "end", iid=str(i), tags=(() if r.get("status") == "complete" else ("bad",)),
                                  values=(when, r.get("satellite"), f"{r.get('max_elevation_deg') or 0:.0f}°",
                                          r.get("mode"), r.get("s_meter_max") if r.get("s_meter_max") is not None else "—",
                                          status_bg.get(r.get("status"), r.get("status")),
-                                         "✓" if has_audio else "—"))
+                                         "✓" if has_audio else "—", sig_txt))
+        if pending:
+            self._analyze_pending(pending)
+
+    def _analyze_pending(self, files: list[str], job: str = "signals") -> None:
+        """Find signals in recordings that have not been analysed yet (background, one by one)."""
+        from sattrack.signals import analyze_record
+
+        def work():
+            out = {}
+            for f in files:
+                try:
+                    out[f] = analyze_record(self.cfg, self.cfg.data_dir / f)
+                except Exception as e:  # noqa: BLE001 — a broken file must not stop the rest
+                    log.warning("Анализ на %s: %s", f, e)
+            return out
+
+        def done(res, err):
+            for i, r in enumerate(self.records):
+                if res and r["file"] in res and self.rec_tree.exists(str(i)):
+                    self.rec_tree.set(str(i), "sig", self._sig_text(res[r["file"]]) if res[r["file"]] else "—")
+            f = self._selected_file()
+            if res and res.get(f) and self.rec_sig is None and self.player.path is not None:
+                self.rec_sig = res[f]          # keep playing; just draw the result
+                self._show_signals()
+                self._update_play_ui()
+
+        self.bg(job, work, done)
+
+    def _selected_file(self) -> str | None:
+        sel = self.rec_tree.selection()
+        return self.records[int(sel[0])]["file"] if sel else None
 
     def _selected_record(self) -> dict | None:
-        sel = self.rec_tree.selection()
-        if not sel:
-            return None
-        return read_json(self.cfg.data_dir / self.records[int(sel[0])]["file"], {}) or {}
+        f = self._selected_file()
+        return (read_json(self.cfg.data_dir / f, {}) or {}) if f else None
 
     def _selected_audio(self) -> Path | None:
         rec = self._selected_record()
@@ -759,8 +904,120 @@ class App:
         self.rec_detail.configure(state="normal")
         self.rec_detail.delete("1.0", "end")
         if rec:
-            self.rec_detail.insert("end", json.dumps(rec, ensure_ascii=False, indent=2))
+            shown = dict(rec)
+            if isinstance(shown.get("signals"), dict):   # the activity envelope is long and unreadable
+                shown["signals"] = {k: v for k, v in shown["signals"].items() if k != "activity"}
+            self.rec_detail.insert("end", json.dumps(shown, ensure_ascii=False, indent=2))
         self.rec_detail.configure(state="disabled")
+        self._load_timeline(rec)
+
+    def _load_timeline(self, rec: dict | None) -> None:
+        from sattrack import signals
+        self.player.unload()
+        self.rec_sig = None
+        self.rec_start = None
+        self.tl_pos.configure(text="")
+        audio = self.cfg.path(rec["audio_file"]) if rec and rec.get("audio_file") else None
+        if not audio or not audio.exists():
+            self.timeline.show(0, None, "Няма аудио файл" if rec else "")
+            self.tl_info.configure(text="")
+            self._update_play_ui()
+            return
+        try:
+            self.player.load(audio)
+        except Exception as e:  # noqa: BLE001
+            self.timeline.show(0, None, f"Файлът не може да се отвори: {e}")
+            return
+        try:
+            self.rec_start = datetime.fromisoformat(rec["start"]) if rec.get("start") else None
+        except ValueError:
+            pass
+        if rec.get("status") == "in_progress":
+            self.timeline.show(self.player.duration, None, "Записът тече — анализът ще е след края му")
+            self.tl_info.configure(text="")
+        else:
+            self.rec_sig = signals.cached(rec, audio)
+            if self.rec_sig is None:
+                self.timeline.show(self.player.duration, None, "Търсене на сигнали…")
+                self.tl_info.configure(text="")
+                f = self._selected_file()
+                self._analyze_pending([f], job=f"signals:{f}")
+            else:
+                self._show_signals()
+        self._update_play_ui()
+
+    def _show_signals(self) -> None:
+        from sattrack.signals import summary
+        segs = self.rec_sig.get("segments") or []
+        n, total = summary(self.rec_sig)
+        self.timeline.show(self.player.duration, self.rec_sig,
+                           "" if n else "Не са открити сигнали — само шум")
+        kinds = {s["kind"] for s in segs}
+        legend = "   ■ зелено: FM сигнал (шумът затихва)" if "FM" in kinds else ""
+        legend += "   ■ оранжево: носеща / тон" if "tone" in kinds else ""
+        self.tl_info.configure(text=(f"Сигнали: {n}, общо {total:.0f} s.{legend}   "
+                                     "Щракнете върху лентата, за да слушате от там.") if n else "")
+
+    # --- playback ---
+    def _update_play_ui(self) -> None:
+        playing = self.player.playing
+        self.btn_play.configure(text="⏸ Пауза" if playing else "▶ Пусни")
+        pos, dur = self.player.position, self.player.duration
+        self.timeline.set_position(pos)
+        if dur:
+            clock = f"   ({self.local(self.rec_start + timedelta(seconds=pos))})" if self.rec_start else ""
+            self.tl_pos.configure(text=f"{fmt_mmss(pos)} / {fmt_mmss(dur)}{clock}")
+        if playing and self._play_job is None:
+            self._play_job = self.root.after(100, self._play_tick)
+
+    def _play_tick(self) -> None:
+        self._play_job = None
+        self._update_play_ui()
+
+    def _start_playback(self, start: float | None = None) -> None:
+        if self.player.path is None:
+            if self._selected_audio() is None:
+                return
+            self._on_rec_select()
+        try:
+            self.player.play(start)
+            log.info("Възпроизвежда се %s от %s", self.player.path.name, fmt_mmss(self.player.position))
+        except Exception as e:  # noqa: BLE001
+            messagebox.showerror("SatTrack", f"Не може да се пусне: {e}")
+        self._update_play_ui()
+
+    def play(self) -> None:
+        """Play / pause toggle."""
+        if self.player.playing:
+            self.player.stop()
+            self._update_play_ui()
+        else:
+            self._start_playback()
+
+    def seek_play(self, seconds: float) -> None:
+        self._start_playback(seconds)
+
+    def jump_signal(self, direction: int) -> None:
+        """Play from 1 s before the next (+1) or previous (-1) detected signal."""
+        segs = (self.rec_sig or {}).get("segments") or []
+        if not segs:
+            messagebox.showinfo("SatTrack", "В този запис не са открити сигнали." if self.rec_sig
+                                else "Изберете запис с аудио (анализът може още да тече).")
+            return
+        pos = self.player.position
+        starts = [max(0.0, s["start"] - 1.0) for s in segs]
+        if direction > 0:
+            nxt = [t for t in starts if t > pos + 0.5]
+            target = nxt[0] if nxt else starts[0]
+        else:
+            prv = [t for t in starts if t < pos - 1.5]
+            target = prv[-1] if prv else starts[-1]
+        self._start_playback(target)
+
+    def stop_play(self) -> None:
+        self.player.stop()
+        self.player.seek(0)
+        self._update_play_ui()
 
     def delete_record(self, confirm: bool = True) -> None:
         """Delete the selected pass (JSON + WAV + index entry) after confirmation."""
@@ -784,7 +1041,7 @@ class App:
                 "Изтриване на запис", f"Да се изтрие ли записът\n{what}?{files}\nДанни: {stem}.json\n\n"
                                       "Това не може да се върне.", icon="warning"):
             return
-        self.stop_play()  # the player may hold the WAV file open
+        self.player.unload()  # the player holds the WAV file open while playing
         try:
             PassLog(self.cfg).delete(stem)
         except Exception as e:
@@ -798,23 +1055,6 @@ class App:
             nxt = rows[min(i, len(rows) - 1)]
             self.rec_tree.selection_set(nxt)
             self.rec_tree.focus(nxt)
-
-    def play(self) -> None:
-        p = self._selected_audio()
-        if p:
-            try:
-                import winsound
-                winsound.PlaySound(str(p), winsound.SND_FILENAME | winsound.SND_ASYNC)
-                log.info("Възпроизвежда се %s", p.name)
-            except Exception as e:
-                messagebox.showerror("SatTrack", f"Не може да се пусне: {e}")
-
-    def stop_play(self) -> None:
-        try:
-            import winsound
-            winsound.PlaySound(None, 0)
-        except Exception:
-            pass
 
     def open_player(self) -> None:
         p = self._selected_audio()
