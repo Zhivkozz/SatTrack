@@ -1,3 +1,4 @@
+import gc
 import json
 import time
 
@@ -39,6 +40,9 @@ def app(cfg):
     a = App(root, cfg)
     yield a
     root.destroy()
+    # collect Tk objects here, on the main thread: if the garbage collector runs them in a
+    # worker thread later, Tcl fails and the next tk.Tk() of another test is skipped
+    gc.collect()
 
 
 def pump(app, seconds=3.0):
@@ -119,6 +123,34 @@ def test_gui_record_timeline_shows_signals(app, cfg):
     assert started[-1] == pytest.approx(29, abs=0.5)   # 1 s before the signal
     app.delete_record(confirm=False)           # the selected WAV is not locked
     assert not cfg.path("recordings/s.wav").exists()
+
+
+def test_gui_sstv_decodes_and_shows(app, cfg, monkeypatch):
+    from test_sstv import make_pattern, robot36_audio, save
+    from sattrack.passlog import PassLog
+    cfg.path("recordings").mkdir(parents=True, exist_ok=True)
+    save(cfg.path("recordings/v.wav"), robot36_audio(make_pattern()))
+    PassLog(cfg).write("2026-11-21T11-17_VIZARD", {"status": "complete", "mode": "FM",
+                                                   "satellite": {"name": "VIZARD", "norad_id": 1},
+                                                   "start": "2026-11-21T11:17:00+02:00", "audio_file": "recordings/v.wav"})
+    shown = []
+    real = app.open_sstv_viewer
+    monkeypatch.setattr(app, "open_sstv_viewer", lambda rec, ims: shown.append(real(rec, ims)))
+    app.refresh_records()
+    app.rec_tree.selection_set("0")
+    app._on_rec_select()
+    app.show_sstv()
+    end = time.time() + 20
+    while not shown and time.time() < end:
+        app.root.update()
+        time.sleep(0.02)
+    assert shown, "viewer did not open"
+    win = shown[0]
+    assert len(win.photos) == 1 and win.photos[0][1].width() == 640
+    win.destroy()
+    app.show_sstv()                    # second time: from the cache, no decoding
+    assert len(shown) == 2
+    shown[1].destroy()
 
 
 def test_gui_toggle_satellite_persists(app, cfg):

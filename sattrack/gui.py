@@ -788,6 +788,8 @@ class App:
         ttk.Button(bar, text="■ Спри", command=self.stop_play).pack(side="left", padx=4)
         ttk.Button(bar, text="⏮ Предишен сигнал", command=lambda: self.jump_signal(-1)).pack(side="left", padx=(12, 4))
         ttk.Button(bar, text="Следващ сигнал ⏭", command=lambda: self.jump_signal(1)).pack(side="left", padx=4)
+        self.btn_sstv = ttk.Button(bar, text="🖼 SSTV", command=self.show_sstv)
+        self.btn_sstv.pack(side="left", padx=(12, 4))
         ttk.Button(bar, text="Отвори в плейър", command=self.open_player).pack(side="left", padx=(12, 4))
         ttk.Button(bar, text="Папка", command=self.open_folder).pack(side="left", padx=4)
         ttk.Button(bar, text="⟳ Обнови", command=self.refresh_records).pack(side="right")
@@ -1013,6 +1015,99 @@ class App:
             prv = [t for t in starts if t < pos - 1.5]
             target = prv[-1] if prv else starts[-1]
         self._start_playback(target)
+
+    # --- SSTV ---
+    def show_sstv(self) -> None:
+        """Decode the selected recording's SSTV pictures (once) and show them."""
+        from sattrack import sstv
+        f = self._selected_file()
+        if not f:
+            messagebox.showinfo("SatTrack", "Изберете запис от списъка.")
+            return
+        rec = self._selected_record() or {}
+        old = rec.get("sstv") or {}
+        audio = self.cfg.path(rec["audio_file"]) if rec.get("audio_file") else None
+        have_pngs = old.get("images") and all(self.cfg.path(i["file"]).exists() for i in old["images"])
+        if old.get("version") == sstv.VERSION and (have_pngs or not old.get("images")) and (
+                not audio or not audio.exists() or old.get("audio_size") == audio.stat().st_size):
+            self._sstv_result(rec, old)           # already decoded (the WAV may be gone by now)
+            return
+        if not audio or not audio.exists():
+            messagebox.showinfo("SatTrack", "Този запис няма аудио файл.")
+            return
+        if rec.get("status") == "in_progress":
+            messagebox.showinfo("SatTrack", "Записът още тече. Декодирането е възможно след края му.")
+            return
+        self.btn_sstv.state(["disabled"])
+        self.btn_sstv.configure(text="Декодиране…")
+
+        def done(res, err):
+            self.btn_sstv.state(["!disabled"])
+            self.btn_sstv.configure(text="🖼 SSTV")
+            if err:
+                messagebox.showerror("SatTrack", f"SSTV декодирането не успя: {err}")
+            elif res is not None:
+                self._sstv_result(read_json(self.cfg.data_dir / f, {}) or rec, res)
+
+        self.bg(f"sstv:{f}", lambda: sstv.decode_record(self.cfg, self.cfg.data_dir / f), done)
+
+    def _sstv_result(self, rec: dict, res: dict) -> None:
+        if not res.get("images"):
+            messagebox.showinfo("SatTrack", "В този запис не е открито SSTV изображение (Robot36).")
+            return
+        self.open_sstv_viewer(rec, res["images"])
+
+    def open_sstv_viewer(self, rec: dict, images: list[dict]) -> tk.Toplevel:
+        win = tk.Toplevel(self.root)
+        sat = (rec.get("satellite") or {}).get("name", "")
+        when = (rec.get("start") or "")[:16].replace("T", " ")
+        win.title(f"SSTV — {sat}, {when}")
+        set_window_icon(win)
+        side = ttk.Frame(win, padding=8)
+        side.pack(side="left", fill="y")
+        main = ttk.Frame(win, padding=8)
+        main.pack(side="left", fill="both", expand=True)
+        big = ttk.Label(main)
+        big.pack()
+        caption = ttk.Label(main, font=FONT_BOLD)
+        caption.pack(anchor="w", pady=(6, 2))
+        btns = ttk.Frame(main)
+        btns.pack(anchor="w")
+        win.photos = []                 # Tk forgets images that Python does not reference
+        current = {}
+
+        def select(i: int) -> None:
+            im = images[i]
+            current["i"] = i
+            big.configure(image=win.photos[i][1])
+            whole = "цяло" if im.get("rows", 0) >= 240 else f"част: {im.get('rows')} от 240 реда"
+            caption.configure(text=f"Изображение {i + 1} от {len(images)} · {im.get('mode')} · "
+                                   f"от {fmt_mmss(im['start_s'])} в записа · {whole}")
+
+        def listen() -> None:
+            self.root.lift()
+            self.seek_play(images[current["i"]]["start_s"])
+
+        for i, im in enumerate(images):
+            try:
+                ph = tk.PhotoImage(file=str(self.cfg.path(im["file"])))
+            except tk.TclError as e:
+                log.warning("SSTV изображение %s: %s", im["file"], e)
+                continue
+            win.photos.append((ph.subsample(2), ph.zoom(2)))
+            ttk.Button(side, image=win.photos[-1][0], text=f"{i + 1} · {fmt_mmss(im['start_s'])}",
+                       compound="top", command=lambda i=len(win.photos) - 1: select(i)).pack(pady=(0, 6))
+        if not win.photos:
+            win.destroy()
+            messagebox.showerror("SatTrack", "Изображенията не могат да се отворят.")
+            return win
+        images = [im for im in images if self.cfg.path(im["file"]).exists()][: len(win.photos)]
+        ttk.Button(btns, text="▶ Слушай от тук", command=listen).pack(side="left")
+        ttk.Button(btns, text="Отвори файла",
+                   command=lambda: os.startfile(self.cfg.path(images[current["i"]]["file"]))).pack(side="left", padx=4)  # type: ignore[attr-defined]
+        ttk.Button(btns, text="Папка", command=self.open_folder).pack(side="left", padx=4)
+        select(0)
+        return win
 
     def stop_play(self) -> None:
         self.player.stop()

@@ -86,7 +86,7 @@ class PassLog:
         atomic_write_json(self.index_path, idx)
 
     def delete(self, stem: str) -> list[Path]:
-        """Delete a pass record: its JSON, its audio file and its index entry.
+        """Delete a pass record: its JSON, its audio file, decoded SSTV pictures and its index entry.
 
         Returns the files that were actually removed.
         """
@@ -95,12 +95,12 @@ class PassLog:
         if rec.get("status") == STATUS_IN_PROGRESS:
             raise ValueError("the pass is still being recorded")
         removed: list[Path] = []
-        audio = rec.get("audio_file")
-        if audio:
-            ap = self.cfg.path(audio)
-            if ap.exists():
-                ap.unlink()
-                removed.append(ap)
+        files = [rec.get("audio_file")] + [i.get("file") for i in (rec.get("sstv") or {}).get("images", [])]
+        for f in filter(None, files):
+            fp = self.cfg.path(f)
+            if fp.exists():
+                fp.unlink()
+                removed.append(fp)
         if path.exists():
             path.unlink()
             removed.append(path)
